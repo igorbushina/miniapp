@@ -1,0 +1,23 @@
+body {
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: #f6f6f6;
+}
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  font-size: 16px;
+}
+button {
+  background-color: #2481cc;
+  color: white;
+  border: none;
+  margin-top: 20px;
+  cursor: pointer;
+}
