@@ -22,6 +22,7 @@ h1 {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 24px;
+  font-size: 1.5rem;
 }
 
 label {
@@ -40,22 +41,31 @@ select,
 input[type="text"],
 textarea {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
   background-color: #fff;
   box-sizing: border-box;
   margin-top: 6px;
+  transition: border-color 0.2s ease;
+}
+
+select:focus,
+input[type="text"]:focus,
+textarea:focus {
+  border-color: #3cb371;
+  outline: none;
 }
 
 textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 100px;
 }
 
 input[type="file"] {
-  margin-top: 10px;
+  margin-top: 12px;
+  font-size: 0.95rem;
 }
 
 .checkbox {
@@ -63,7 +73,8 @@ input[type="file"] {
   align-items: flex-start;
   gap: 8px;
   font-size: 0.95rem;
-  margin-top: 20px;
+  margin-top: 16px;
+  line-height: 1.4;
 }
 
 .checkbox input {
@@ -82,7 +93,7 @@ input[type="file"] {
 button {
   width: 100%;
   padding: 14px;
-  margin-top: 20px;
+  margin-top: 18px;
   border: none;
   border-radius: 8px;
   background-color: #3cb371;
@@ -109,6 +120,6 @@ button i {
 .buttons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   margin-top: 24px;
 }
