@@ -11,6 +11,7 @@ from telegram import (
     WebAppInfo,
 )
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
+from city_group_ids import CITY_GROUP_IDS  # <-- импорт словаря с chat_id
 
 # Логирование
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +20,6 @@ logger = logging.getLogger(__name__)
 # Загрузка переменных окружения
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
-GROUP_ID = os.getenv("GROUP_ID")  # Например: "-1002509743859"
 
 # /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -64,45 +64,50 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         contact = data.get("contact")
         text = data.get("text")
 
-        if country == "Германия" and city == "Гельдерн":
-            if action == "view":
-                await update.message.reply_text(
-                    "Переходите в группу с объявлениями для Гельдерна:",
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("👥 Группа @zhivuv_gelderne", url="https://t.me/zhivuv_gelderne")]
-                    ])
-                )
+        key = (country, city)
+        group_id = CITY_GROUP_IDS.get(key)
+
+        if not group_id:
+            await update.message.reply_text(
+                "⛔ Публикация доступна только для поддерживаемых городов. "
+                "Сейчас объявления можно размещать только в группе Гельдерна (Германия)."
+            )
+            return
+
+        if action == "view":
+            await update.message.reply_text(
+                f"Переходите в Telegram-группу для города {city}:",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton(f"👥 Группа {city}", url=f"https://t.me/zhivuv_{city.lower()}e")]
+                ])
+            )
+            return
+
+        elif action == "add":
+            if not category or not contact or not text:
+                await update.message.reply_text("⛔ Пожалуйста, заполните все поля.")
                 return
 
-            elif action == "add":
-                if not category or not contact or not text:
-                    await update.message.reply_text("⛔ Пожалуйста, заполните все поля.")
-                    return
-
-                post = f"""📍 <b>{city}, {country}</b>
+            post = f"""📍 <b>{city}, {country}</b>
 📂 <b>Категория:</b> {category}
 👤 <b>Контакты:</b> {contact}
 📝 <b>Текст:</b> {text}
 """
-                context.user_data["last_post"] = post
+            context.user_data["last_post"] = {"post": post, "chat_id": group_id}
 
-                await context.bot.send_message(
-                    chat_id=GROUP_ID,
-                    text=post,
-                    parse_mode="HTML"
-                )
-
-                logger.info(f"[INFO] Объявление отправлено в группу: {GROUP_ID}")
-
-                await update.message.reply_text(
-                    "✅ Ваше объявление опубликовано в группе.\n"
-                    "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
-                )
-                return
-        else:
-            await update.message.reply_text(
-                "⛔ Публикация возможна только для города Гельдерн (Германия)."
+            await context.bot.send_message(
+                chat_id=group_id,
+                text=post,
+                parse_mode="HTML"
             )
+
+            logger.info(f"[INFO] Объявление отправлено в группу: {group_id}")
+
+            await update.message.reply_text(
+                "✅ Ваше объявление опубликовано в группе.\n"
+                "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
+            )
+            return
 
     except Exception as e:
         logger.error("Ошибка в handle_webapp_data", exc_info=True)
@@ -111,7 +116,8 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
 # Обработка фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        if "last_post" not in context.user_data:
+        data = context.user_data.get("last_post")
+        if not data:
             await update.message.reply_text("⚠️ Сначала создайте объявление через кнопку 'Живу в…'")
             return
 
@@ -119,11 +125,10 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("⚠️ Фото не получено.")
             return
 
-        photo = update.message.photo[-1]
-        file_id = photo.file_id
+        file_id = update.message.photo[-1].file_id
 
         await context.bot.send_photo(
-            chat_id=GROUP_ID,
+            chat_id=data["chat_id"],
             photo=file_id,
             caption="📸 Фото к объявлению"
         )
@@ -139,4 +144,4 @@ def setup_handlers(app):
     app.add_handler(CommandHandler("getchatid", get_chat_id))
     app.add_handler(MessageHandler(filters.TEXT & filters.UpdateType.MESSAGE, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))  # Автоматический вывод chat_id
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))

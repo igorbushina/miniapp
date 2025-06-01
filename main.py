@@ -13,8 +13,9 @@ logger = logging.getLogger(__name__)
 
 # Загрузка переменных окружения
 load_dotenv()
+
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Например: https://.../webhook
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Пример: https://example.onrender.com/webhook
 PORT = int(os.getenv("PORT", "10000"))
 
 if not BOT_TOKEN or not WEBHOOK_URL:
@@ -22,16 +23,20 @@ if not BOT_TOKEN or not WEBHOOK_URL:
 
 logger.info("🚀 Запуск Telegram-бота...")
 
+# Создание приложения
 application = ApplicationBuilder().token(BOT_TOKEN).build()
+
+# Подключение хендлеров
 setup_handlers(application)
-
 logger.info("✅ Хендлеры подключены.")
-logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
 
-# ❗ НЕ ВНУТРИ ASYNCIO.RUN — это уже готовый event loop
+# Запуск webhook-сервера
+logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
 application.run_webhook(
     listen="0.0.0.0",
     port=PORT,
     webhook_url=WEBHOOK_URL,
-    allowed_updates=["message", "callback_query"]
+    allowed_updates=["message", "callback_query"],
+    # Рекомендуется: Render использует root path
+    path="/"
 )
