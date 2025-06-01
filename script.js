@@ -65,23 +65,44 @@ const countries = {
 window.addEventListener("DOMContentLoaded", () => {
   const countrySelect = document.getElementById("country");
   const citySelect = document.getElementById("city");
-  const addForm = document.getElementById("adForm");
+  const adForm = document.getElementById("adForm");
+  const contactInput = document.getElementById("contact");
+  const textInput = document.getElementById("text");
+  const categorySelect = document.getElementById("category");
+  const gdprCheckbox = document.getElementById("gdpr");
+  const photoInput = document.getElementById("photo");
+  const viewBtn = document.getElementById("viewBtn");
+  const addBtn = document.getElementById("addBtn");
 
-  // Заполняем список стран
+  // Кнопка "Назад"
+  const backBtn = document.createElement("button");
+  backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Назад';
+  backBtn.style.marginTop = "20px";
+  backBtn.style.backgroundColor = "#ccc";
+  backBtn.style.color = "#000";
+  backBtn.style.border = "none";
+  backBtn.style.borderRadius = "8px";
+  backBtn.style.padding = "12px";
+  backBtn.style.fontSize = "1rem";
+  backBtn.style.cursor = "pointer";
+  backBtn.style.display = "none";
+  backBtn.type = "button";
+  adForm.parentNode.insertBefore(backBtn, adForm.nextSibling);
+
+  // Заполнение списка стран
   const countryList = Object.keys(countries).sort();
-  for (const country of countryList) {
+  countryList.forEach(country => {
     const option = document.createElement("option");
     option.value = country;
     option.textContent = country;
     countrySelect.appendChild(option);
-  }
+  });
 
-  // Обновляем список городов при смене страны
+  // При выборе страны — обновляем города
   countrySelect.addEventListener("change", () => {
-    const selectedCountry = countrySelect.value;
-    const cityList = countries[selectedCountry] || [];
+    const cities = countries[countrySelect.value] || [];
     citySelect.innerHTML = "";
-    cityList.sort().forEach(city => {
+    cities.sort().forEach(city => {
       const option = document.createElement("option");
       option.value = city;
       option.textContent = city;
@@ -89,48 +110,82 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Инициализация значений по умолчанию
+  // Стартовое обновление списка городов
   countrySelect.dispatchEvent(new Event("change"));
 
-  // "Посмотреть объявления"
-  document.getElementById("viewBtn").addEventListener("click", () => {
-    const country = countrySelect.value;
-    const city = citySelect.value;
-    const payload = { action: "view", country, city };
-    Telegram.WebApp.sendData(JSON.stringify(payload));
+  // Кнопка "Посмотреть объявления"
+  viewBtn.addEventListener("click", () => {
+    const payload = {
+      action: "view",
+      country: countrySelect.value,
+      city: citySelect.value
+    };
+
+    try {
+      Telegram.WebApp.sendData(JSON.stringify(payload));
+      console.log("📤 Payload sent (view):", payload);
+
+      // Открытие ссылки (внутри Telegram)
+      if (countrySelect.value === "Германия" && citySelect.value === "Гельдерн") {
+        Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
+      }
+    } catch (error) {
+      console.error("❌ Ошибка при отправке данных (view):", error);
+      alert("Ошибка при открытии группы. Проверьте подключение.");
+    }
   });
 
-  // "Добавить объявление" — показать форму
-  document.getElementById("addBtn").addEventListener("click", () => {
-    addForm.style.display = "block";
+  // Кнопка "Добавить объявление"
+  addBtn.addEventListener("click", () => {
+    adForm.style.display = "block";
+    viewBtn.style.display = "none";
+    addBtn.style.display = "none";
+    backBtn.style.display = "block";
   });
 
-  // Отправка формы
-  addForm.addEventListener("submit", (e) => {
+  // Кнопка "Назад"
+  backBtn.addEventListener("click", () => {
+    adForm.style.display = "none";
+    viewBtn.style.display = "block";
+    addBtn.style.display = "block";
+    backBtn.style.display = "none";
+  });
+
+  // Отправка объявления
+  adForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const country = countrySelect.value;
-    const city = citySelect.value;
-    const category = document.getElementById("category").value;
-    const contact = document.getElementById("contact").value.trim();
-    const text = document.getElementById("text").value.trim();
-    const gdpr = document.getElementById("gdpr").checked;
+    if (!Telegram || !Telegram.WebApp || !Telegram.WebApp.sendData) {
+      alert("❗ WebApp API недоступен. Запустите через Telegram.");
+      return;
+    }
 
-    if (!gdpr) {
-      alert("Вы должны согласиться с обработкой персональных данных.");
+    if (!gdprCheckbox.checked) {
+      alert("⚠️ Вы должны согласиться с обработкой персональных данных.");
+      return;
+    }
+
+    const file = photoInput.files[0];
+    if (file) {
+      alert("📸 Фото нужно прикрепить отдельно после публикации, через Telegram-бота.");
       return;
     }
 
     const payload = {
       action: "add",
-      country,
-      city,
-      category,
-      contact,
-      text
-      // Фото пока не отправляется
+      country: countrySelect.value,
+      city: citySelect.value,
+      category: categorySelect.value,
+      contact: contactInput.value,
+      text: textInput.value
     };
 
-    Telegram.WebApp.sendData(JSON.stringify(payload));
+    try {
+      Telegram.WebApp.sendData(JSON.stringify(payload));
+      console.log("📤 Payload sent (add):", payload);
+    } catch (error) {
+      console.error("❌ Ошибка при отправке объявления:", error);
+      alert("Ошибка при публикации объявления.");
+    }
   });
 });
