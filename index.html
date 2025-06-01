@@ -1,40 +1,68 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Живу в… | Выбор локации</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Живу в…</title>
+
+  <!-- Шрифт Rubik -->
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Иконки Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Основной стиль -->
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <h2>Выберите страну, город и категорию</h2>
+  <div class="container">
+    <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
 
-  <label for="country">Страна:</label>
-  <select id="country"></select>
+    <label for="country"><i class="fas fa-flag icon"></i> Страна:</label>
+    <select id="country"></select>
 
-  <label for="city">Город:</label>
-  <select id="city"></select>
+    <label for="city"><i class="fas fa-city icon"></i> Город:</label>
+    <select id="city"></select>
 
-  <label for="category">Категория:</label>
-  <select id="category">
-    <option>Ремонт</option>
-    <option>Перевозки</option>
-    <option>Помощь по дому и саду</option>
-    <option>Обучение</option>
-    <option>Маникюр и педикюр</option>
-    <option>Парикмахер</option>
-    <option>Косметолог</option>
-    <option>Помощь с детьми и пожилыми</option>
-    <option>Куплю</option>
-    <option>Продам</option>
-    <option>Жилье</option>
-    <option>Знакомства</option>
-    <option>Новости</option>
-  </select>
+    <div class="buttons">
+      <button id="viewBtn"><i class="fas fa-eye"></i> Посмотреть объявления</button>
+      <button id="addBtn"><i class="fas fa-plus"></i> Добавить объявление</button>
+    </div>
 
-  <p>Нажимая кнопку, вы соглашаетесь с <a href="https://eur-lex.europa.eu/legal-content/RU/TXT/?uri=CELEX%3A32016R0679" target="_blank">GDPR</a>.</p>
-  <button onclick="submitSelection()">Продолжить</button>
+    <form id="adForm" style="display:none;">
+      <label for="category"><i class="fas fa-folder-open icon"></i> Категория:</label>
+      <select id="category" required>
+        <option value="">Выберите категорию</option>
+        <option value="Ремонт">Ремонт</option>
+        <option value="Услуги">Услуги</option>
+        <option value="Обучение">Обучение</option>
+        <option value="Жилье">Жилье</option>
+        <option value="Продажа">Продажа</option>
+        <option value="Куплю">Куплю</option>
+        <option value="Знакомства">Знакомства</option>
+        <option value="Новости">Новости</option>
+      </select>
+
+      <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
+      <input type="text" id="contact" placeholder="Например: @username, телефон" required />
+
+      <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
+      <textarea id="text" rows="4" placeholder="Введите текст..." required></textarea>
+
+      <label for="photo"><i class="fas fa-image icon"></i> Фото (необязательно):</label>
+      <input type="file" id="photo" accept="image/*" />
+
+      <label class="checkbox">
+        <input type="checkbox" id="gdpr" required />
+        Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank">обработкой персональных данных (GDPR)</a>
+      </label>
+
+      <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить объявление</button>
+    </form>
+  </div>
 
   <script src="script.js"></script>
 </body>
