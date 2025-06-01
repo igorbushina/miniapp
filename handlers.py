@@ -14,7 +14,7 @@ from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
 # Загрузка переменных окружения
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
-GROUP_ID = os.getenv("GROUP_ID")  # Пример: "-1001234567890"
+GROUP_ID = os.getenv("GROUP_ID")  # Пример: "-1002509743859"
 
 # Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -48,7 +48,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 await update.message.reply_text(
                     "Переходите в группу с объявлениями для Гельдерна:",
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("👥 Группа @zhivuv_geldern", url="https://t.me/zhivuv_geldern")]
+                        [InlineKeyboardButton("👥 Группа @zhivuv_gelderne", url="https://t.me/zhivuv_gelderne")]
                     ])
                 )
             elif action == "add":
@@ -58,10 +58,10 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
 📝 <b>Текст:</b> {text}
 """
 
-                # Сохраняем пост в user_data, если нужно для будущих доработок
+                # Сохраняем в user_data
                 context.user_data["last_post"] = post
 
-                # Публикация в группу
+                # Публикуем в группу
                 await context.bot.send_message(
                     chat_id=GROUP_ID,
                     text=post,
@@ -69,18 +69,18 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 )
 
                 await update.message.reply_text(
-                    "✅ Ваше объявление опубликовано.\n"
-                    "📸 Если хотите, отправьте фотографию — я прикреплю её к объявлению."
+                    "✅ Ваше объявление опубликовано в группе.\n"
+                    "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
                 )
         else:
             await update.message.reply_text(
-                "⛔ Публикация доступна только для города Гельдерн (Германия)."
+                "⛔ Публикация возможна только для города Гельдерн (Германия)."
             )
     except Exception as e:
         await update.message.reply_text("⚠️ Ошибка при обработке данных.")
         print(f"[ОШИБКА] handle_webapp_data: {e}")
 
-# Обработка фото после объявления
+# Обработка фото после публикации объявления
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         photo = update.message.photo[-1]
@@ -94,12 +94,12 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text("✅ Фото прикреплено к объявлению.")
     except Exception as e:
-        await update.message.reply_text("⚠️ Ошибка при обработке фото.")
+        await update.message.reply_text("⚠️ Ошибка при отправке фото.")
         print(f"[ОШИБКА] handle_photo: {e}")
 
-# Регистрация хендлеров
+# Регистрация всех хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
     app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
-    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))  # ← Новый хендлер для фото
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
