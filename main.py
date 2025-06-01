@@ -32,7 +32,6 @@ def main():
         listen="0.0.0.0",
         port=PORT,
         webhook_url=WEBHOOK_URL,
-        path="/webhook",  # ✅ ОБЯЗАТЕЛЕН! Именно это Telegram вызывает
         allowed_updates=["message", "callback_query"]
     )
 
