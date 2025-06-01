@@ -70,23 +70,15 @@ window.addEventListener("DOMContentLoaded", () => {
   const textInput = document.getElementById("text");
   const categorySelect = document.getElementById("category");
   const gdprCheckbox = document.getElementById("gdpr");
-  const photoInput = document.getElementById("photo");
   const viewBtn = document.getElementById("viewBtn");
   const addBtn = document.getElementById("addBtn");
+  const backBtn = document.getElementById("backBtn");
 
   // Проверка и инициализация Telegram WebApp
   if (!window.Telegram || !Telegram.WebApp || !Telegram.WebApp.initDataUnsafe) {
     alert("⚠️ Откройте мини-приложение через Telegram, чтобы отправить объявление.");
     return;
   }
-
-  // Кнопка "Назад"
-  const backBtn = document.createElement("button");
-  backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Назад';
-  backBtn.classList.add("back-button");
-  backBtn.style.display = "none";
-  backBtn.type = "button";
-  adForm.parentNode.insertBefore(backBtn, adForm.nextSibling);
 
   // Заполнение стран
   const countryList = Object.keys(countries).sort();
@@ -156,12 +148,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (!gdprCheckbox.checked) {
       alert("⚠️ Подтвердите согласие на обработку персональных данных.");
-      return;
-    }
-
-    const file = photoInput.files[0];
-    if (file) {
-      alert("📸 Пожалуйста, прикрепите фото через Telegram после публикации.");
       return;
     }
 
