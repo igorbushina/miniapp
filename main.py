@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # Загрузка переменных окружения
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Например: https://miniapp-xx0j.onrender.com/webhook
 PORT = int(os.getenv("PORT", "10000"))
 
 def main():
@@ -24,16 +24,16 @@ def main():
     logger.info("🚀 Запуск Telegram-бота...")
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Подключение всех хендлеров
     setup_handlers(application)
     logger.info("✅ Хендлеры подключены.")
     logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
 
-    # ✅ ОБЯЗАТЕЛЬНО указать webhook_path
+    # ⚠️ Путь нужно указывать в WEBHOOK_URL, а НЕ как отдельный параметр
     application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         webhook_url=WEBHOOK_URL,
-        webhook_path="/webhook",  # ⚠️ Render требует явного указания пути
         allowed_updates=["message", "callback_query"]
     )
 

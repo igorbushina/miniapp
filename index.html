@@ -24,11 +24,11 @@
   <main class="container">
     <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
 
-    <!-- Страна -->
+    <!-- Выбор страны -->
     <label for="country"><i class="fas fa-flag icon"></i> Страна:</label>
     <select id="country" aria-label="Выберите страну"></select>
 
-    <!-- Город -->
+    <!-- Выбор города -->
     <label for="city"><i class="fas fa-city icon"></i> Город:</label>
     <select id="city" aria-label="Выберите город"></select>
 
@@ -42,7 +42,7 @@
     <form id="adForm" style="display: none; margin-top: 30px;">
       <div class="form-group">
         <label for="category"><i class="fas fa-folder-open icon"></i> Категория:</label>
-        <select id="category" required aria-label="Выберите категорию">
+        <select id="category" required>
           <option value="">Выберите категорию</option>
           <option value="Ремонт">Ремонт</option>
           <option value="Услуги">Услуги</option>
@@ -74,12 +74,13 @@
         </label>
       </div>
 
+      <!-- Кнопки формы -->
       <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить объявление</button>
       <button type="button" id="backBtn" class="back-button"><i class="fas fa-arrow-left"></i> Назад</button>
     </form>
   </main>
 
-  <!-- Управление логикой кнопок -->
+  <!-- Управление кнопками (показ формы и возврат) -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const addBtn = document.getElementById("addBtn");
@@ -99,7 +100,8 @@
     });
   </script>
 
-  <!-- Основная логика -->
+  <!-- Подключение данных и логики -->
+  <script src="data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

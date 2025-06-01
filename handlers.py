@@ -126,5 +126,5 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
+    app.add_handler(MessageHandler(filters.TEXT, handle_webapp_data))  # Проверка web_app_data внутри
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))

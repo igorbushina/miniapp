@@ -74,13 +74,13 @@ window.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addBtn");
   const backBtn = document.getElementById("backBtn");
 
-  // Проверка и инициализация Telegram WebApp
+  // Проверка Telegram WebApp
   if (!window.Telegram || !Telegram.WebApp || !Telegram.WebApp.initDataUnsafe) {
-    alert("⚠️ Откройте мини-приложение через Telegram, чтобы отправить объявление.");
+    alert("⚠️ Откройте мини-приложение через Telegram.");
     return;
   }
 
-  // Заполнение стран
+  // Заполнение списка стран
   const countryList = Object.keys(countries).sort();
   countryList.forEach((country) => {
     const option = document.createElement("option");
@@ -89,7 +89,7 @@ window.addEventListener("DOMContentLoaded", () => {
     countrySelect.appendChild(option);
   });
 
-  // Заполнение городов при выборе страны
+  // При выборе страны — обновить города
   countrySelect.addEventListener("change", () => {
     const cities = countries[countrySelect.value] || [];
     citySelect.innerHTML = "";
@@ -101,22 +101,30 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Первоначальная инициализация
+  // Инициализация городов при загрузке
   countrySelect.dispatchEvent(new Event("change"));
 
-  // Кнопка "Посмотреть объявления"
+  // Просмотр объявлений
   viewBtn.addEventListener("click", () => {
+    const country = countrySelect.value;
+    const city = citySelect.value;
+
+    if (!country || !city) {
+      alert("⚠️ Выберите страну и город.");
+      return;
+    }
+
     const payload = {
       action: "view",
-      country: countrySelect.value,
-      city: citySelect.value
+      country,
+      city
     };
 
     try {
       Telegram.WebApp.sendData(JSON.stringify(payload));
       console.log("📤 Payload sent (view):", payload);
 
-      if (payload.country === "Германия" && payload.city === "Гельдерн") {
+      if (country === "Германия" && city === "Гельдерн") {
         Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
       }
     } catch (err) {
@@ -125,7 +133,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Кнопка "Добавить объявление"
+  // Показ формы объявления
   addBtn.addEventListener("click", () => {
     adForm.style.display = "block";
     viewBtn.style.display = "none";
@@ -133,7 +141,7 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "block";
   });
 
-  // Кнопка "Назад"
+  // Назад к кнопкам
   backBtn.addEventListener("click", () => {
     adForm.style.display = "none";
     viewBtn.style.display = "block";
@@ -141,14 +149,9 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "none";
   });
 
-  // Отправка формы
+  // Отправка объявления
   adForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    if (!gdprCheckbox.checked) {
-      alert("⚠️ Подтвердите согласие на обработку персональных данных.");
-      return;
-    }
 
     const payload = {
       action: "add",
@@ -159,14 +162,33 @@ window.addEventListener("DOMContentLoaded", () => {
       text: textInput.value.trim()
     };
 
+    if (!payload.country || !payload.city) {
+      alert("⚠️ Выберите страну и город.");
+      return;
+    }
+
     if (!payload.category || !payload.contact || !payload.text) {
       alert("⚠️ Пожалуйста, заполните все обязательные поля.");
+      return;
+    }
+
+    if (!gdprCheckbox.checked) {
+      alert("⚠️ Подтвердите согласие на обработку персональных данных.");
       return;
     }
 
     try {
       Telegram.WebApp.sendData(JSON.stringify(payload));
       console.log("📤 Payload sent (add):", payload);
+
+      // Очистка и закрытие
+      adForm.reset();
+      adForm.style.display = "none";
+      viewBtn.style.display = "block";
+      addBtn.style.display = "block";
+      backBtn.style.display = "none";
+
+      setTimeout(() => Telegram.WebApp.close(), 500); // Подождать чуть-чуть перед закрытием
     } catch (err) {
       console.error("❌ Ошибка отправки:", err);
       alert("Произошла ошибка при отправке объявления.");
