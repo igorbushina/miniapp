@@ -33,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # /getchatid
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
-    await update.message.reply_text(f"Chat ID: {chat_id}")
+    await update.message.reply_text(f"Chat ID: <code>{chat_id}</code>", parse_mode="HTML")
 
 # WebApp data
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -121,9 +121,15 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error("Ошибка в handle_photo", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
+# Автоматический вывод chat_id при первом сообщении
+async def send_chat_id_auto(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+    await update.message.reply_text(f"Chat ID: <code>{chat_id}</code>", parse_mode="HTML")
+
 # Хендлеры
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.TEXT, handle_webapp_data))  # ✅ исправлено
+    app.add_handler(MessageHandler(filters.TEXT & filters.UpdateType.MESSAGE, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+    app.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, send_chat_id_auto))  # ✅ добавлен в конце
