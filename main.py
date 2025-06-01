@@ -24,17 +24,15 @@ def main():
     logger.info("🚀 Запуск Telegram-бота...")
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Подключение хендлеров
     setup_handlers(application)
     logger.info("✅ Хендлеры подключены.")
 
-    # 🧠 Указываем webhook_path
     logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
     application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         webhook_url=WEBHOOK_URL,
-        webhook_path="/webhook",  # 🧠 ЭТО ОБЯЗАТЕЛЬНО!
+        path="/webhook",  # ✅ ОБЯЗАТЕЛЕН! Именно это Telegram вызывает
         allowed_updates=["message", "callback_query"]
     )
 
