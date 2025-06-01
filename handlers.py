@@ -20,7 +20,7 @@ load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 GROUP_ID = os.getenv("GROUP_ID")  # Пример: "-1002509743859"
 
-# Команда /start
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -29,12 +29,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# Команда /getchatid
+# /getchatid
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     await update.message.reply_text(f"Chat ID: {chat_id}")
 
-# Обработка данных из WebApp
+# WebApp data
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
@@ -97,7 +97,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logger.error("Ошибка в handle_webapp_data", exc_info=True)
         await update.message.reply_text("⚠️ Произошла ошибка при обработке данных.")
 
-# Обработка фото
+# Фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if "last_post" not in context.user_data:
@@ -122,9 +122,9 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error("Ошибка в handle_photo", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
-# Регистрация всех хендлеров
+# Хендлеры
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.TEXT, handle_webapp_data))  # Проверка web_app_data внутри
+    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
