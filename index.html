@@ -2,15 +2,40 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Живу в… | Выбор</title>
+  <title>Живу в… | Выбор локации</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <h2>Выберите страну, город и категорию</h2>
-  <!-- форма выбора -->
+
+  <label for="country">Страна:</label>
+  <select id="country"></select>
+
+  <label for="city">Город:</label>
+  <select id="city"></select>
+
+  <label for="category">Категория:</label>
+  <select id="category">
+    <option>Ремонт</option>
+    <option>Перевозки</option>
+    <option>Помощь по дому и саду</option>
+    <option>Обучение</option>
+    <option>Маникюр и педикюр</option>
+    <option>Парикмахер</option>
+    <option>Косметолог</option>
+    <option>Помощь с детьми и пожилыми</option>
+    <option>Куплю</option>
+    <option>Продам</option>
+    <option>Жилье</option>
+    <option>Знакомства</option>
+    <option>Новости</option>
+  </select>
+
+  <p>Нажимая кнопку, вы соглашаетесь с <a href="https://eur-lex.europa.eu/legal-content/RU/TXT/?uri=CELEX%3A32016R0679" target="_blank">GDPR</a>.</p>
+  <button onclick="submitSelection()">Продолжить</button>
+
   <script src="script.js"></script>
 </body>
 </html>
-
-
