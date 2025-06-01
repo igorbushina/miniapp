@@ -11,7 +11,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Загрузка переменных
+# Загрузка переменных окружения
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
@@ -24,11 +24,12 @@ def main():
     logger.info("🚀 Запуск Telegram-бота...")
     application = ApplicationBuilder().token(BOT_TOKEN).build()
 
+    # Подключение хендлеров
     setup_handlers(application)
     logger.info("✅ Хендлеры подключены.")
     logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
 
-    # ❗ Без параметра `path`
+    # ⚠️ БЕЗ параметра path (иначе будет TypeError)
     application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
