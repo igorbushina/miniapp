@@ -13,6 +13,7 @@ from telegram import (
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
 
 # Логирование
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Загрузка переменных окружения
@@ -38,8 +39,7 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
-            logger.warning("update.message.web_app_data отсутствует")
-            await update.message.reply_text("⚠️ Данные из мини-приложения не получены.")
+            logger.info("Нет web_app_data в сообщении.")
             return
 
         data = json.loads(update.message.web_app_data.data)
@@ -87,7 +87,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                     "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
                 )
                 return
-
         else:
             await update.message.reply_text(
                 "⛔ Публикация возможна только для города Гельдерн (Германия)."
@@ -126,5 +125,5 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
+    app.add_handler(MessageHandler(filters.TEXT, handle_webapp_data))  # ✅ исправлено
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
