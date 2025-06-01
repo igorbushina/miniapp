@@ -116,7 +116,6 @@ window.addEventListener("DOMContentLoaded", () => {
       Telegram.WebApp.sendData(JSON.stringify(payload));
       console.log("📤 Payload sent (view):", payload);
 
-      // Переход в группу
       if (payload.country === "Германия" && payload.city === "Гельдерн") {
         Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
       }
@@ -160,7 +159,6 @@ window.addEventListener("DOMContentLoaded", () => {
       text: textInput.value.trim()
     };
 
-    // Проверка на пустые поля
     if (!payload.category || !payload.contact || !payload.text) {
       alert("⚠️ Пожалуйста, заполните все обязательные поля.");
       return;
