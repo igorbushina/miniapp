@@ -1,5 +1,6 @@
 import os
 import json
+import logging
 from dotenv import load_dotenv
 from telegram import (
     Update,
@@ -11,6 +12,9 @@ from telegram import (
 )
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
 
+# Логирование
+logger = logging.getLogger(__name__)
+
 # Загрузка переменных окружения
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
@@ -18,9 +22,7 @@ GROUP_ID = os.getenv("GROUP_ID")  # Пример: "-1002509743859"
 
 # Команда /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]
-    ]
+    keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text(
         "Привет! Нажми кнопку ниже, чтобы выбрать страну и город:",
@@ -36,12 +38,12 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
-            print("[ОШИБКА] update.message.web_app_data отсутствует")
+            logger.warning("update.message.web_app_data отсутствует")
             await update.message.reply_text("⚠️ Данные из мини-приложения не получены.")
             return
 
         data = json.loads(update.message.web_app_data.data)
-        print("[DEBUG] Получены данные WebApp:", data)
+        logger.info(f"[DEBUG] Получены данные WebApp: {data}")
 
         country = data.get("country")
         city = data.get("city")
@@ -78,7 +80,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                     parse_mode="HTML"
                 )
 
-                print("[INFO] Объявление отправлено в группу:", GROUP_ID)
+                logger.info(f"[INFO] Объявление отправлено в группу: {GROUP_ID}")
 
                 await update.message.reply_text(
                     "✅ Ваше объявление опубликовано в группе.\n"
@@ -92,14 +94,18 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             )
 
     except Exception as e:
-        print(f"[ОШИБКА] handle_webapp_data: {e}")
+        logger.error("Ошибка в handle_webapp_data", exc_info=True)
         await update.message.reply_text("⚠️ Произошла ошибка при обработке данных.")
 
 # Обработка фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if "last_post" not in context.user_data:
-            await update.message.reply_text("⚠️ Пожалуйста, сначала создайте объявление через кнопку 'Живу в…'")
+            await update.message.reply_text("⚠️ Сначала создайте объявление через кнопку 'Живу в…'")
+            return
+
+        if not update.message or not update.message.photo:
+            await update.message.reply_text("⚠️ Фото не получено.")
             return
 
         photo = update.message.photo[-1]
@@ -113,12 +119,12 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text("✅ Фото прикреплено к объявлению.")
     except Exception as e:
-        print(f"[ОШИБКА] handle_photo: {e}")
+        logger.error("Ошибка в handle_photo", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
 # Регистрация всех хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
+    app.add_handler(MessageHandler(filters.TEXT & filters.UpdateType.WEB_APP_DATA, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
