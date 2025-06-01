@@ -32,33 +32,43 @@
       <button id="addBtn"><i class="fas fa-plus"></i> Добавить объявление</button>
     </div>
 
-    <form id="adForm" style="display:none;">
-      <label for="category"><i class="fas fa-folder-open icon"></i> Категория:</label>
-      <select id="category" required>
-        <option value="">Выберите категорию</option>
-        <option value="Ремонт">Ремонт</option>
-        <option value="Услуги">Услуги</option>
-        <option value="Обучение">Обучение</option>
-        <option value="Жилье">Жилье</option>
-        <option value="Продажа">Продажа</option>
-        <option value="Куплю">Куплю</option>
-        <option value="Знакомства">Знакомства</option>
-        <option value="Новости">Новости</option>
-      </select>
+    <form id="adForm" style="display:none; margin-top: 30px;">
+      <div class="form-group">
+        <label for="category"><i class="fas fa-folder-open icon"></i> Категория:</label>
+        <select id="category" required>
+          <option value="">Выберите категорию</option>
+          <option value="Ремонт">Ремонт</option>
+          <option value="Услуги">Услуги</option>
+          <option value="Обучение">Обучение</option>
+          <option value="Жилье">Жилье</option>
+          <option value="Продажа">Продажа</option>
+          <option value="Куплю">Куплю</option>
+          <option value="Знакомства">Знакомства</option>
+          <option value="Новости">Новости</option>
+        </select>
+      </div>
 
-      <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
-      <input type="text" id="contact" placeholder="Например: @username, телефон" required />
+      <div class="form-group">
+        <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
+        <textarea id="contact" rows="2" placeholder="Например: @username, телефон" required></textarea>
+      </div>
 
-      <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
-      <textarea id="text" rows="4" placeholder="Введите текст..." required></textarea>
+      <div class="form-group">
+        <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
+        <textarea id="text" rows="5" placeholder="Введите текст..." required></textarea>
+      </div>
 
-      <label for="photo"><i class="fas fa-image icon"></i> Фото (необязательно):</label>
-      <input type="file" id="photo" accept="image/*" />
+      <div class="form-group">
+        <label for="photo"><i class="fas fa-image icon"></i> Фото (необязательно):</label>
+        <input type="file" id="photo" accept="image/*" />
+      </div>
 
-      <label class="checkbox">
-        <input type="checkbox" id="gdpr" required />
-        Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank">обработкой персональных данных (GDPR)</a>
-      </label>
+      <div class="form-group" style="margin-top: 20px;">
+        <label class="checkbox">
+          <input type="checkbox" id="gdpr" required />
+          Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank">обработкой персональных данных (GDPR)</a>
+        </label>
+      </div>
 
       <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить объявление</button>
     </form>
