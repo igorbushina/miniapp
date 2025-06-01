@@ -14,27 +14,24 @@ logger = logging.getLogger(__name__)
 # Загрузка переменных окружения
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Например: https://.../webhook
 PORT = int(os.getenv("PORT", "10000"))
 
-async def main():
-    if not BOT_TOKEN or not WEBHOOK_URL:
-        raise ValueError("❌ Не заданы переменные BOT_TOKEN или WEBHOOK_URL")
+if not BOT_TOKEN or not WEBHOOK_URL:
+    raise ValueError("❌ Не заданы переменные BOT_TOKEN или WEBHOOK_URL")
 
-    logger.info("🚀 Запуск Telegram-бота...")
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
+logger.info("🚀 Запуск Telegram-бота...")
 
-    setup_handlers(application)
-    logger.info("✅ Хендлеры подключены.")
-    logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
+application = ApplicationBuilder().token(BOT_TOKEN).build()
+setup_handlers(application)
 
-    await application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=WEBHOOK_URL,
-        allowed_updates=["message", "callback_query"]
-    )
+logger.info("✅ Хендлеры подключены.")
+logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
 
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+# ❗ НЕ ВНУТРИ ASYNCIO.RUN — это уже готовый event loop
+application.run_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    webhook_url=WEBHOOK_URL,
+    allowed_updates=["message", "callback_query"]
+)
