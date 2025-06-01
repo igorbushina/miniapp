@@ -74,35 +74,34 @@ window.addEventListener("DOMContentLoaded", () => {
   const viewBtn = document.getElementById("viewBtn");
   const addBtn = document.getElementById("addBtn");
 
+  // Проверка и инициализация Telegram WebApp
+  if (!window.Telegram || !Telegram.WebApp || !Telegram.WebApp.initDataUnsafe) {
+    alert("⚠️ Откройте мини-приложение через Telegram, чтобы отправить объявление.");
+    return;
+  }
+
   // Кнопка "Назад"
   const backBtn = document.createElement("button");
   backBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Назад';
-  backBtn.style.marginTop = "20px";
-  backBtn.style.backgroundColor = "#ccc";
-  backBtn.style.color = "#000";
-  backBtn.style.border = "none";
-  backBtn.style.borderRadius = "8px";
-  backBtn.style.padding = "12px";
-  backBtn.style.fontSize = "1rem";
-  backBtn.style.cursor = "pointer";
+  backBtn.classList.add("back-button");
   backBtn.style.display = "none";
   backBtn.type = "button";
   adForm.parentNode.insertBefore(backBtn, adForm.nextSibling);
 
-  // Заполнение списка стран
+  // Заполнение стран
   const countryList = Object.keys(countries).sort();
-  countryList.forEach(country => {
+  countryList.forEach((country) => {
     const option = document.createElement("option");
     option.value = country;
     option.textContent = country;
     countrySelect.appendChild(option);
   });
 
-  // При выборе страны — обновляем города
+  // Заполнение городов при выборе страны
   countrySelect.addEventListener("change", () => {
     const cities = countries[countrySelect.value] || [];
     citySelect.innerHTML = "";
-    cities.sort().forEach(city => {
+    cities.sort().forEach((city) => {
       const option = document.createElement("option");
       option.value = city;
       option.textContent = city;
@@ -110,7 +109,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Стартовое обновление списка городов
+  // Первоначальная инициализация
   countrySelect.dispatchEvent(new Event("change"));
 
   // Кнопка "Посмотреть объявления"
@@ -125,13 +124,13 @@ window.addEventListener("DOMContentLoaded", () => {
       Telegram.WebApp.sendData(JSON.stringify(payload));
       console.log("📤 Payload sent (view):", payload);
 
-      // Открытие ссылки (внутри Telegram)
-      if (countrySelect.value === "Германия" && citySelect.value === "Гельдерн") {
+      // Переход в группу
+      if (payload.country === "Германия" && payload.city === "Гельдерн") {
         Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
       }
-    } catch (error) {
-      console.error("❌ Ошибка при отправке данных (view):", error);
-      alert("Ошибка при открытии группы. Проверьте подключение.");
+    } catch (err) {
+      console.error("❌ Ошибка перехода в группу:", err);
+      alert("Произошла ошибка при открытии группы.");
     }
   });
 
@@ -151,23 +150,18 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "none";
   });
 
-  // Отправка объявления
+  // Отправка формы
   adForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    if (!Telegram || !Telegram.WebApp || !Telegram.WebApp.sendData) {
-      alert("❗ WebApp API недоступен. Запустите через Telegram.");
-      return;
-    }
-
     if (!gdprCheckbox.checked) {
-      alert("⚠️ Вы должны согласиться с обработкой персональных данных.");
+      alert("⚠️ Подтвердите согласие на обработку персональных данных.");
       return;
     }
 
     const file = photoInput.files[0];
     if (file) {
-      alert("📸 Фото нужно прикрепить отдельно после публикации, через Telegram-бота.");
+      alert("📸 Пожалуйста, прикрепите фото через Telegram после публикации.");
       return;
     }
 
@@ -176,16 +170,22 @@ window.addEventListener("DOMContentLoaded", () => {
       country: countrySelect.value,
       city: citySelect.value,
       category: categorySelect.value,
-      contact: contactInput.value,
-      text: textInput.value
+      contact: contactInput.value.trim(),
+      text: textInput.value.trim()
     };
+
+    // Проверка на пустые поля
+    if (!payload.category || !payload.contact || !payload.text) {
+      alert("⚠️ Пожалуйста, заполните все обязательные поля.");
+      return;
+    }
 
     try {
       Telegram.WebApp.sendData(JSON.stringify(payload));
       console.log("📤 Payload sent (add):", payload);
-    } catch (error) {
-      console.error("❌ Ошибка при отправке объявления:", error);
-      alert("Ошибка при публикации объявления.");
+    } catch (err) {
+      console.error("❌ Ошибка отправки:", err);
+      alert("Произошла ошибка при отправке объявления.");
     }
   });
 });
