@@ -34,7 +34,7 @@ label {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 select,
@@ -73,7 +73,7 @@ input[type="file"] {
   align-items: flex-start;
   gap: 8px;
   font-size: 0.95rem;
-  margin-top: 16px;
+  margin-top: 20px;
   line-height: 1.4;
 }
 
@@ -93,7 +93,7 @@ input[type="file"] {
 button {
   width: 100%;
   padding: 14px;
-  margin-top: 18px;
+  margin-top: 20px;
   border: none;
   border-radius: 8px;
   background-color: #3cb371;
@@ -122,4 +122,22 @@ button i {
   flex-direction: column;
   gap: 14px;
   margin-top: 24px;
+}
+
+.back-button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #cccccc;
+  color: #000;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #b3b3b3;
 }
