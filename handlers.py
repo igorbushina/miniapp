@@ -27,15 +27,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# Команда /getchatid — показывает chat_id текущего чата
+# Команда /getchatid
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     await update.message.reply_text(f"Chat ID: {chat_id}")
 
-# Обработка WebApp данных
+# Обработка данных из WebApp
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+        if not update.message or not update.message.web_app_data:
+            print("[ОШИБКА] update.message.web_app_data отсутствует")
+            await update.message.reply_text("⚠️ Данные из мини-приложения не получены.")
+            return
+
         data = json.loads(update.message.web_app_data.data)
+        print("[DEBUG] Получены данные WebApp:", data)
+
         country = data.get("country")
         city = data.get("city")
         action = data.get("action")
@@ -51,38 +58,50 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                         [InlineKeyboardButton("👥 Группа @zhivuv_gelderne", url="https://t.me/zhivuv_gelderne")]
                     ])
                 )
+                return
+
             elif action == "add":
+                if not category or not contact or not text:
+                    await update.message.reply_text("⛔ Пожалуйста, заполните все поля.")
+                    return
+
                 post = f"""📍 <b>{city}, {country}</b>
 📂 <b>Категория:</b> {category}
 👤 <b>Контакты:</b> {contact}
 📝 <b>Текст:</b> {text}
 """
-
-                # Сохраняем в user_data
                 context.user_data["last_post"] = post
 
-                # Публикуем в группу
                 await context.bot.send_message(
                     chat_id=GROUP_ID,
                     text=post,
                     parse_mode="HTML"
                 )
 
+                print("[INFO] Объявление отправлено в группу:", GROUP_ID)
+
                 await update.message.reply_text(
                     "✅ Ваше объявление опубликовано в группе.\n"
                     "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
                 )
+                return
+
         else:
             await update.message.reply_text(
                 "⛔ Публикация возможна только для города Гельдерн (Германия)."
             )
-    except Exception as e:
-        await update.message.reply_text("⚠️ Ошибка при обработке данных.")
-        print(f"[ОШИБКА] handle_webapp_data: {e}")
 
-# Обработка фото после публикации объявления
+    except Exception as e:
+        print(f"[ОШИБКА] handle_webapp_data: {e}")
+        await update.message.reply_text("⚠️ Произошла ошибка при обработке данных.")
+
+# Обработка фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+        if "last_post" not in context.user_data:
+            await update.message.reply_text("⚠️ Пожалуйста, сначала создайте объявление через кнопку 'Живу в…'")
+            return
+
         photo = update.message.photo[-1]
         file_id = photo.file_id
 
@@ -94,8 +113,8 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text("✅ Фото прикреплено к объявлению.")
     except Exception as e:
-        await update.message.reply_text("⚠️ Ошибка при отправке фото.")
         print(f"[ОШИБКА] handle_photo: {e}")
+        await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
 # Регистрация всех хендлеров
 def setup_handlers(app):
