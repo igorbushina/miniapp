@@ -1,6 +1,5 @@
 import os
 import logging
-import asyncio
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder
 from handlers import setup_handlers
@@ -18,7 +17,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Например: https://miniapp-xx0j.onrender.com/webhook
 PORT = int(os.getenv("PORT", "10000"))
 
-async def main():
+def main():
     if not BOT_TOKEN or not WEBHOOK_URL:
         raise ValueError("❌ Не заданы переменные BOT_TOKEN или WEBHOOK_URL")
 
@@ -30,8 +29,8 @@ async def main():
     logger.info("✅ Хендлеры подключены.")
     logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
 
-    # Запуск бота через webhook
-    await application.run_webhook(
+    # Запуск через встроенный вебхук
+    application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
         webhook_url=WEBHOOK_URL,
@@ -39,4 +38,4 @@ async def main():
     )
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
