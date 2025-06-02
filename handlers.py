@@ -11,7 +11,7 @@ from telegram import (
     WebAppInfo,
 )
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
-from city_group_ids import CITY_GROUP_IDS  # <-- словарь (country, city): chat_id
+from city_group_ids import CITY_GROUP_IDS  # словарь (country, city): chat_id
 
 # Логирование
 logging.basicConfig(level=logging.INFO)
@@ -45,7 +45,7 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
-            return  # Пропускаем, если нет web_app_data
+            return
 
         data = json.loads(update.message.web_app_data.data)
         logger.info(f"[DEBUG] Получены данные WebApp: {data}")
@@ -68,10 +68,11 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             return
 
         if action == "view":
+            username = f"zhivuv_{city.lower()}"
             await update.message.reply_text(
                 f"Переходите в Telegram-группу для города {city}:",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton(f"👥 Группа {city}", url=f"https://t.me/zhivuv_{city.lower()}")]
+                    [InlineKeyboardButton(f"👥 Группа {city}", url=f"https://t.me/{username}")]
                 ])
             )
             return
@@ -134,10 +135,10 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error("Ошибка в handle_photo", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
-# Автоматическая отправка chat_id при любом текстовом сообщении
+# Автоматическая отправка chat_id при обычных текстовых сообщениях
 async def send_chat_id_auto(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        if update.message:
+        if update.message and not update.message.web_app_data:
             chat_id = update.effective_chat.id
             await update.message.reply_text(
                 f"Chat ID: <code>{chat_id}</code>",
@@ -150,6 +151,6 @@ async def send_chat_id_auto(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_webapp_data))
+    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))  # в самом конце
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))

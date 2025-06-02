@@ -47,9 +47,10 @@ h1 {
 
 label {
   font-weight: 500;
-  margin-top: 16px;
-  margin-bottom: 6px;
+  margin-top: 12px;
+  margin-bottom: 4px;
   display: block;
+  font-size: 1.1rem;
   color: var(--color-text);
 }
 
@@ -61,12 +62,12 @@ select,
 input,
 textarea {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  font-size: 1rem;
+  font-size: 1.05rem;
   background-color: var(--color-white);
-  margin-top: 6px;
+  margin-top: 4px;
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
@@ -90,20 +91,26 @@ textarea {
 
 .checkbox {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 0.95rem;
-  margin-top: 20px;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  margin-top: 12px;
+  margin-bottom: 12px;
   line-height: 1.4;
 }
 
 .checkbox input {
-  margin-top: 4px;
+  width: 22px;
+  height: 22px;
+  margin: 0;
   cursor: pointer;
+  accent-color: var(--color-primary);
 }
 
 .checkbox label {
   cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1.2;
 }
 
 .checkbox a {
@@ -178,22 +185,66 @@ button i {
 }
 
 /* Адаптивность для смартфонов */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  label {
+    font-size: 1rem;
+  }
+
+  select,
+  textarea,
+  input[type="text"] {
+    font-size: 1rem;
+    padding: 14px;
+  }
+
+  button {
+    font-size: 1rem;
+    padding: 14px;
+  }
+
+  .checkbox label {
+    font-size: 0.95rem;
+  }
+
+  .checkbox input {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 @media (max-width: 480px) {
   body {
     padding: 12px;
   }
 
   .container {
-    padding: 16px;
+    padding: 14px;
+    box-shadow: none;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  label {
+    font-size: 0.95rem;
+  }
+
+  select,
+  textarea,
+  input[type="text"] {
+    font-size: 0.95rem;
+    padding: 12px;
   }
 
   button {
     font-size: 0.95rem;
     padding: 12px;
-  }
-
-  textarea {
-    min-height: 80px;
   }
 
   .form-group {
@@ -202,6 +253,15 @@ button i {
 
   .form-buttons {
     gap: 12px;
+  }
+
+  .checkbox input {
+    width: 18px;
+    height: 18px;
+  }
+
+  .checkbox label {
+    font-size: 0.9rem;
   }
 }
 
