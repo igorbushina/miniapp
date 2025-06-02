@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#3cb371" />
   <meta name="description" content="Telegram Mini App 'Живу в…' — объявления по городам"/>
-
   <title>Живу в…</title>
 
   <!-- Шрифт Rubik -->
@@ -18,7 +17,7 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <!-- Основной стиль -->
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
   <main class="container">
@@ -80,7 +79,14 @@
     </form>
   </main>
 
-  <!-- Логика показа/скрытия формы -->
+  <!-- Проверка Telegram WebApp SDK -->
+  <script>
+    if (!window.Telegram || !Telegram.WebApp) {
+      document.body.innerHTML = "<p style='text-align:center;padding:20px;'>❌ Откройте приложение через Telegram</p>";
+    }
+  </script>
+
+  <!-- Управление кнопками -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const addBtn = document.getElementById("addBtn");
@@ -100,8 +106,8 @@
     });
   </script>
 
-  <!-- Подключение данных и логики -->
-  <script src="data.js"></script>
-  <script src="script.js"></script>
+  <!-- Подключение логики -->
+  <script src="./data.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
