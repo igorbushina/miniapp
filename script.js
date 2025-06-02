@@ -1,9 +1,9 @@
 const countries = {
-  "Азербайджан": [...],
-  "Армения": [...],
-  "Германия": [...],
-  "Грузия": [...],
-  "Израиль": [...]
+  "Азербайджан": ["Баку"],
+  "Армения": ["Ереван"],
+  "Германия": ["Гельдерн", "Берлин", "Кёльн", "Дюссельдорф"],
+  "Грузия": ["Тбилиси"],
+  "Израиль": ["Тель-Авив"]
 };
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -18,41 +18,40 @@ window.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addBtn");
   const backBtn = document.getElementById("backBtn");
 
+  // ✅ Проверка окружения
   if (!window.Telegram?.WebApp?.sendData) {
-    alert("⚠️ Пожалуйста, откройте мини-приложение внутри Telegram.");
+    alert("⚠️ Откройте мини-приложение через Telegram.");
     return;
   }
 
-  // 📍 Заполнение стран
-  Object.keys(countries).sort().forEach((country) => {
-    const option = document.createElement("option");
-    option.value = country;
-    option.textContent = country;
+  // 📍 Заполнение списка стран
+  Object.keys(countries).sort().forEach(country => {
+    const option = new Option(country, country);
     countrySelect.appendChild(option);
   });
 
-  // 📍 Обновление городов при смене страны
+  // 📍 Обновление списка городов при выборе страны
   countrySelect.addEventListener("change", () => {
-    const cities = countries[countrySelect.value] || [];
+    const selected = countrySelect.value;
+    const cities = countries[selected] || [];
     citySelect.innerHTML = "";
-    cities.sort().forEach((city) => {
-      const option = document.createElement("option");
-      option.value = city;
-      option.textContent = city;
+
+    cities.sort().forEach(city => {
+      const option = new Option(city, city);
       citySelect.appendChild(option);
     });
   });
 
-  // Инициализация при загрузке
+  // 🟢 Первичная инициализация
   countrySelect.dispatchEvent(new Event("change"));
 
-  // 👁 Посмотреть объявления
+  // 👁 Просмотр объявлений
   viewBtn.addEventListener("click", () => {
     const country = countrySelect.value;
     const city = citySelect.value;
 
     if (!country || !city) {
-      alert("⚠️ Пожалуйста, выберите страну и город.");
+      alert("⚠️ Выберите страну и город.");
       return;
     }
 
@@ -60,6 +59,7 @@ window.addEventListener("DOMContentLoaded", () => {
     Telegram.WebApp.sendData(JSON.stringify(payload));
     console.log("📤 View payload:", payload);
 
+    // Примерная ссылка, можно позже вынести в отдельный справочник
     if (country === "Германия" && city === "Гельдерн") {
       Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
     }
@@ -95,12 +95,12 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     if (!payload.country || !payload.city || !payload.category || !payload.contact || !payload.text) {
-      alert("⚠️ Пожалуйста, заполните все поля.");
+      alert("⚠️ Заполните все поля.");
       return;
     }
 
     if (!gdprCheckbox.checked) {
-      alert("⚠️ Подтвердите согласие на обработку персональных данных.");
+      alert("⚠️ Подтвердите согласие на обработку данных.");
       return;
     }
 
