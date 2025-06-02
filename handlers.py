@@ -11,7 +11,7 @@ from telegram import (
     WebAppInfo,
 )
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
-from city_group_ids import CITY_GROUP_IDS  # <-- импорт словаря с chat_id
+from city_group_ids import CITY_GROUP_IDS  # <-- словарь (country, city): chat_id
 
 # Логирование
 logging.basicConfig(level=logging.INFO)
@@ -20,6 +20,9 @@ logger = logging.getLogger(__name__)
 # Загрузка переменных окружения
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
+
+if not WEBAPP_URL:
+    logger.warning("⚠️ Переменная окружения WEBAPP_URL не установлена.")
 
 # /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -38,21 +41,11 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="HTML"
     )
 
-# Автоматическая отправка chat_id при первом сообщении
-async def send_chat_id_auto(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message:
-        chat_id = update.effective_chat.id
-        await update.message.reply_text(
-            f"Chat ID: <code>{chat_id}</code>",
-            parse_mode="HTML"
-        )
-
-# Обработка WebApp
+# Обработка WebApp данных
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
-            logger.info("Нет web_app_data в сообщении.")
-            return
+            return  # Пропускаем, если нет web_app_data
 
         data = json.loads(update.message.web_app_data.data)
         logger.info(f"[DEBUG] Получены данные WebApp: {data}")
@@ -78,7 +71,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.reply_text(
                 f"Переходите в Telegram-группу для города {city}:",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton(f"👥 Группа {city}", url=f"https://t.me/zhivuv_{city.lower()}e")]
+                    [InlineKeyboardButton(f"👥 Группа {city}", url=f"https://t.me/zhivuv_{city.lower()}")]
                 ])
             )
             return
@@ -93,7 +86,11 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
 👤 <b>Контакты:</b> {contact}
 📝 <b>Текст:</b> {text}
 """
-            context.user_data["last_post"] = {"post": post, "chat_id": group_id}
+
+            context.user_data["last_post"] = {
+                "post": post,
+                "chat_id": group_id
+            }
 
             await context.bot.send_message(
                 chat_id=group_id,
@@ -107,7 +104,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 "✅ Ваше объявление опубликовано в группе.\n"
                 "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
             )
-            return
 
     except Exception as e:
         logger.error("Ошибка в handle_webapp_data", exc_info=True)
@@ -138,10 +134,22 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error("Ошибка в handle_photo", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
+# Автоматическая отправка chat_id при любом текстовом сообщении
+async def send_chat_id_auto(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        if update.message:
+            chat_id = update.effective_chat.id
+            await update.message.reply_text(
+                f"Chat ID: <code>{chat_id}</code>",
+                parse_mode="HTML"
+            )
+    except Exception as e:
+        logger.error("Ошибка в send_chat_id_auto", exc_info=True)
+
 # Регистрация хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
-    app.add_handler(MessageHandler(filters.TEXT & filters.UpdateType.MESSAGE, handle_webapp_data))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))  # в самом конце

@@ -58,7 +58,7 @@ label {
 }
 
 select,
-input[type="text"],
+input,
 textarea {
   width: 100%;
   padding: 14px;
@@ -71,11 +71,16 @@ textarea {
 }
 
 select:focus,
-input[type="text"]:focus,
+input:focus,
 textarea:focus {
   border-color: var(--color-primary);
   outline: none;
   box-shadow: 0 0 0 2px rgba(60, 179, 113, 0.2);
+}
+
+select:disabled {
+  background-color: #f0f0f0;
+  color: #999;
 }
 
 textarea {
@@ -149,10 +154,15 @@ button i {
   margin-top: 24px;
 }
 
+.form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .back-button {
   width: 100%;
   padding: 14px;
-  margin-top: 20px;
   border: none;
   border-radius: var(--radius);
   background-color: var(--color-gray-light);
@@ -184,6 +194,14 @@ button i {
 
   textarea {
     min-height: 80px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-buttons {
+    gap: 12px;
   }
 }
 
