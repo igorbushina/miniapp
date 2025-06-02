@@ -1,9 +1,9 @@
 const countries = {
-  "Азербайджан": [...],
-  "Армения": [...],
-  "Германия": [...],
-  "Грузия": [...],
-  "Израиль": [...]
+  "Азербайджан": ["Баку"],
+  "Армения": ["Ереван"],
+  "Германия": ["Гельдерн", "Берлин", "Кёльн", "Дюссельдорф"],
+  "Грузия": ["Тбилиси"],
+  "Израиль": ["Тель-Авив"]
 };
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -18,12 +18,13 @@ window.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addBtn");
   const backBtn = document.getElementById("backBtn");
 
+  // ✅ Проверка окружения
   if (!window.Telegram?.WebApp?.sendData) {
     alert("⚠️ Пожалуйста, откройте мини-приложение внутри Telegram.");
     return;
   }
 
-  // 📍 Заполнение стран
+  // 📍 Заполнение списка стран
   Object.keys(countries).sort().forEach((country) => {
     const option = document.createElement("option");
     option.value = country;
@@ -31,10 +32,11 @@ window.addEventListener("DOMContentLoaded", () => {
     countrySelect.appendChild(option);
   });
 
-  // 📍 Обновление городов при смене страны
+  // 📍 Обновление городов при выборе страны
   countrySelect.addEventListener("change", () => {
     const cities = countries[countrySelect.value] || [];
     citySelect.innerHTML = "";
+
     cities.sort().forEach((city) => {
       const option = document.createElement("option");
       option.value = city;
@@ -43,10 +45,10 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Инициализация при загрузке
+  // 🟢 Инициализация городов при загрузке
   countrySelect.dispatchEvent(new Event("change"));
 
-  // 👁 Посмотреть объявления
+  // 👁 Просмотр объявлений
   viewBtn.addEventListener("click", () => {
     const country = countrySelect.value;
     const city = citySelect.value;
@@ -65,7 +67,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ➕ Показ формы
+  // ➕ Показ формы добавления
   addBtn.addEventListener("click", () => {
     adForm.style.display = "block";
     viewBtn.style.display = "none";
@@ -73,7 +75,7 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "block";
   });
 
-  // ⬅️ Назад
+  // ⬅️ Возврат к кнопкам
   backBtn.addEventListener("click", () => {
     adForm.style.display = "none";
     viewBtn.style.display = "block";
@@ -81,7 +83,7 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "none";
   });
 
-  // 📤 Отправка формы
+  // 📤 Отправка объявления
   adForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
