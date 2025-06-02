@@ -1,11 +1,3 @@
-const countries = {
-  "Азербайджан": ["Баку"],
-  "Армения": ["Ереван"],
-  "Германия": ["Гельдерн", "Берлин", "Кёльн", "Дюссельдорф"],
-  "Грузия": ["Тбилиси"],
-  "Израиль": ["Тель-Авив"]
-};
-
 window.addEventListener("DOMContentLoaded", () => {
   const countrySelect = document.getElementById("country");
   const citySelect = document.getElementById("city");
