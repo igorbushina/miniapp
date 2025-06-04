@@ -3,16 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#3cb371" />
+  <meta name="theme-color" content="#f7f8fa" />
   <meta name="description" content="Telegram Mini App 'Живу в…' — объявления по городам" />
   <title>Живу в…</title>
 
   <!-- Шрифт Rubik -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
+
   <!-- Иконки FontAwesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
   <!-- Telegram SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <!-- Стили -->
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -32,7 +35,7 @@
       <select id="city" name="city" required></select>
     </div>
 
-    <!-- Категория (только для просмотра) -->
+    <!-- Категория для просмотра -->
     <div class="form-group" id="viewCategoryBlock">
       <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория:</label>
       <select id="viewCategory" name="viewCategory">
@@ -48,7 +51,7 @@
       </select>
     </div>
 
-    <!-- Основные кнопки -->
+    <!-- Кнопки -->
     <div class="buttons" id="mainButtons">
       <button id="viewBtn" type="button"><i class="fas fa-eye"></i> Посмотреть объявления</button>
       <button id="addBtn" type="button"><i class="fas fa-plus"></i> Добавить объявление</button>
@@ -73,12 +76,12 @@
 
       <div class="form-group">
         <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
-        <textarea id="contact" name="contact" rows="2" placeholder="@username или телефон" required autocomplete="off"></textarea>
+        <textarea id="contact" name="contact" rows="2" placeholder="@username или телефон" required></textarea>
       </div>
 
       <div class="form-group">
         <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
-        <textarea id="text" name="text" rows="5" placeholder="Введите текст объявления…" required autocomplete="off"></textarea>
+        <textarea id="text" name="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
       </div>
 
       <!-- GDPR -->
@@ -95,7 +98,7 @@
       <!-- Кнопки формы -->
       <div class="form-buttons">
         <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить</button>
-        <button type="button" id="backBtn" class="back-button"><i class="fas fa-arrow-left"></i> Назад</button>
+        <button type="button" id="backBtn"><i class="fas fa-arrow-left"></i> Назад</button>
       </div>
     </form>
   </main>
@@ -109,7 +112,7 @@
   <script src="data.js"></script>
   <script src="script.js"></script>
 
-  <!-- Проверка Telegram -->
+  <!-- Telegram check -->
   <script>
     if (!(window.Telegram && Telegram.WebApp)) {
       document.body.innerHTML = "<p style='text-align:center; padding:20px;'>❌ Откройте приложение через Telegram</p>";
