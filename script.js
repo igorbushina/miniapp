@@ -16,7 +16,14 @@ const viewCategoryBlock = document.getElementById("viewCategoryBlock");
 
 // ▶️ Заполнение стран
 function populateCountries() {
-  countrySelect.innerHTML = "<option value='' selected disabled>Выберите страну</option>";
+  countrySelect.innerHTML = "";
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  defaultOption.textContent = "Выберите страну";
+  countrySelect.appendChild(defaultOption);
+
   const countries = Object.keys(window.countries || {}).sort();
   countries.forEach(country => {
     const option = document.createElement("option");
@@ -28,9 +35,26 @@ function populateCountries() {
 
 // ▶️ Заполнение городов по стране
 function populateCities(country) {
-  citySelect.innerHTML = "<option value='' selected disabled>Выберите город</option>";
+  citySelect.innerHTML = "";
+
   const cities = window.countries[country];
-  if (!cities) return;
+  if (!cities || cities.length === 0) {
+    citySelect.disabled = true;
+    const emptyOption = document.createElement("option");
+    emptyOption.value = "";
+    emptyOption.disabled = true;
+    emptyOption.selected = true;
+    emptyOption.textContent = "Нет доступных городов";
+    citySelect.appendChild(emptyOption);
+    return;
+  }
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.disabled = true;
+  defaultOption.selected = true;
+  defaultOption.textContent = "Выберите город";
+  citySelect.appendChild(defaultOption);
 
   cities.forEach(city => {
     const option = document.createElement("option");
@@ -49,7 +73,6 @@ function resetForm() {
   viewCategoryBlock.style.display = "block";
   adForm.reset();
 
-  // Явно сбрасываем значения и состояния
   categorySelect.value = "";
   contactInput.value = "";
   textInput.value = "";
