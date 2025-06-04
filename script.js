@@ -11,11 +11,14 @@ const gdprCheckbox = document.getElementById("gdpr");
 const backBtn = document.getElementById("backBtn");
 const submitBtn = document.getElementById("submitBtn");
 
+const mainButtons = document.getElementById("mainButtons");
+const viewCategoryBlock = document.getElementById("viewCategoryBlock");
+
 // ▶️ Заполнение стран
 function populateCountries() {
   countrySelect.innerHTML = "<option value='' selected disabled>Выберите страну</option>";
-  const countryList = Object.keys(window.countries).sort();
-  countryList.forEach(country => {
+  const countries = Object.keys(window.countries || {}).sort();
+  countries.forEach(country => {
     const option = document.createElement("option");
     option.value = country;
     option.textContent = country;
@@ -23,7 +26,7 @@ function populateCountries() {
   });
 }
 
-// ▶️ Заполнение городов по выбранной стране
+// ▶️ Заполнение городов по стране
 function populateCities(country) {
   citySelect.innerHTML = "<option value='' selected disabled>Выберите город</option>";
   const cities = window.countries[country];
@@ -39,52 +42,59 @@ function populateCities(country) {
   citySelect.disabled = false;
 }
 
-// ▶️ Очистка формы и возврат в главное меню
+// ▶️ Очистка формы
 function resetForm() {
   adForm.style.display = "none";
-  categorySelect.value = "";
-  contactInput.value = "";
-  textInput.value = "";
-  gdprCheckbox.checked = false;
+  mainButtons.style.display = "flex";
+  viewCategoryBlock.style.display = "block";
+  adForm.reset();
   submitBtn.disabled = false;
 }
 
-// ▶️ Показ формы объявления
+// ▶️ Показ формы
 function showForm() {
   if (!countrySelect.value || !citySelect.value) {
-    alert("Пожалуйста, выберите страну и город перед добавлением объявления.");
+    alert("Пожалуйста, выберите страну и город.");
     return;
   }
-  adForm.style.display = "block";
+
+  mainButtons.style.display = "none";
+  viewCategoryBlock.style.display = "none";
+  adForm.style.display = "flex";
+  adForm.scrollIntoView({ behavior: "smooth" });
 }
 
-// ▶️ Основная инициализация
+// ▶️ Инициализация
 function init() {
   populateCountries();
   resetForm();
   citySelect.disabled = true;
 
-  // Изменение страны
   countrySelect.addEventListener("change", () => {
     populateCities(countrySelect.value);
   });
 
-  // Нажатие "Добавить"
-  addButton.addEventListener("click", () => {
-    showForm();
-  });
+  addButton.addEventListener("click", showForm);
+  backBtn.addEventListener("click", resetForm);
 
-  // Назад
-  backBtn.addEventListener("click", () => {
-    resetForm();
-  });
-
-  // Нажатие "Посмотреть"
   viewButton.addEventListener("click", () => {
-    Telegram.WebApp.openLink("https://t.me/ZhivuVChannel");
+    const country = countrySelect.value;
+    const city = citySelect.value;
+    const category = document.getElementById("viewCategory").value;
+
+    if (!country || !city) {
+      alert("Пожалуйста, выберите страну и город.");
+      return;
+    }
+
+    const hashCountry = "#" + encodeURIComponent(country);
+    const hashCity = "#" + encodeURIComponent(city);
+    const hashCategory = category ? "#" + encodeURIComponent(category) : "";
+
+    const finalLink = `https://t.me/ZhivuVChannel?country=${hashCountry}&city=${hashCity}${hashCategory}`;
+    Telegram.WebApp.openLink(finalLink);
   });
 
-  // Отправка данных
   submitBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -104,10 +114,15 @@ function init() {
     }
 
     submitBtn.disabled = true;
+    submitBtn.innerText = "Отправка...";
+
     Telegram.WebApp.sendData(JSON.stringify(data));
-    Telegram.WebApp.close();
+
+    setTimeout(() => {
+      Telegram.WebApp.close();
+    }, 600);
   });
 }
 
-// ▶️ Инициализация при загрузке страницы
+// ▶️ Запуск
 document.addEventListener("DOMContentLoaded", init);

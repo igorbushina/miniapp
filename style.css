@@ -1,116 +1,111 @@
 :root {
-  --bg-light: #fffaf4;
-  --primary-color: #00b894;
-  --primary-hover: #019174;
-  --secondary-color: #dfe6e9;
-  --secondary-hover: #b2bec3;
-  --danger-color: #fab1a0;
-  --danger-hover: #e17055;
-  --accent: #ffeaa7;
-  --text-main: #2d3436;
-  --text-muted: #636e72;
+  --font: 'Rubik', sans-serif;
+  --blue: #229ED9; /* Telegram blue */
+  --blue-hover: #1c88c7;
+  --white: #ffffff;
+  --gray-bg: #f2f2f7;
+  --input-border: #d0d0d0;
+  --text-main: #2c3e50;
+  --text-muted: #6c757d;
+  --radius: 12px;
+  --pill-radius: 999px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --transition: all 0.2s ease-in-out;
+  --background-gradient: linear-gradient(180deg, #ffffff, #f9f9f9);
 }
 
-/* Общие стили */
+/* 🌍 Базовые настройки */
 body {
-  font-family: 'Rubik', sans-serif;
-  background-color: var(--bg-light);
-  color: var(--text-main);
+  font-family: var(--font);
   margin: 0;
-  padding: 20px;
-  max-width: 480px;
-  margin-inline: auto;
-  background-image: radial-gradient(circle at top left, #ffeaa7 0%, #fffaf4 100%);
+  padding: 0;
+  background: var(--background-gradient);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Заголовки */
+/* 🧾 Контейнер */
+main.container {
+  background: var(--white);
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  max-width: 420px;
+  width: 90%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 🔠 Заголовок */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eaeaea;
+}
+
 h1 {
   text-align: center;
   font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: var(--primary-color);
+  color: var(--blue);
+  font-weight: 700;
+  margin: 0;
 }
 
+/* 🏷️ Метки */
 label {
-  font-weight: 500;
   font-size: 15px;
+  font-weight: 500;
+  color: var(--text-muted);
   margin-bottom: 6px;
   display: block;
-  color: var(--text-muted);
 }
 
-/* Поля ввода */
-select, textarea, input[type="text"] {
+/* 🔲 Поля */
+select,
+textarea,
+input[type="text"] {
   width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 18px;
-  font-size: 16px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-  transition: border 0.2s;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+  background: var(--white);
+  color: var(--text-main);
+  transition: var(--transition);
+  margin-bottom: 10px;
 }
 
-select:focus, textarea:focus, input:focus {
-  border-color: var(--primary-color);
+select:focus,
+textarea:focus,
+input:focus {
+  border-color: var(--blue);
   outline: none;
 }
 
-/* Кнопки */
-button {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-bottom: 14px;
+/* 📦 Группы */
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-#addBtn {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-#addBtn:hover {
-  background-color: var(--primary-hover);
-}
-
-#viewBtn {
-  background-color: var(--secondary-color);
-  color: var(--text-main);
-}
-
-#viewBtn:hover {
-  background-color: var(--secondary-hover);
-}
-
-#backBtn {
-  background-color: var(--danger-color);
-  color: #2d3436;
-}
-
-#backBtn:hover {
-  background-color: var(--danger-hover);
-  color: #fff;
-}
-
-/* GDPR */
+/* 📜 GDPR */
 #gdprWrapper {
   display: flex;
-  gap: 12px;
   align-items: flex-start;
+  gap: 10px;
   margin-top: 8px;
-  margin-bottom: 20px;
 }
 
 #gdpr {
   transform: scale(1.4);
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 #gdprLabel {
@@ -120,10 +115,78 @@ button {
 }
 
 #gdprLabel a {
-  color: var(--primary-color);
+  color: var(--blue);
   text-decoration: none;
 }
 
 #gdprLabel a:hover {
   text-decoration: underline;
+}
+
+/* 🔘 Кнопки */
+button {
+  padding: 12px 18px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: var(--pill-radius);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+
+#viewBtn {
+  background: var(--white);
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+}
+
+#viewBtn:hover {
+  background: #e6f7ff;
+}
+
+#addBtn,
+#submitBtn {
+  background: var(--blue);
+  color: var(--white);
+}
+
+#addBtn:hover,
+#submitBtn:hover {
+  background: var(--blue-hover);
+}
+
+#backBtn {
+  background: #fcebea;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+#backBtn:hover {
+  background: #f1b0b7;
+  color: white;
+}
+
+/* 🧾 Сообщение без JS */
+.noscript-msg {
+  text-align: center;
+  color: red;
+  padding: 20px;
+}
+
+/* 📱 Адаптация */
+@media (max-width: 480px) {
+  main.container {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  button {
+    font-size: 15px;
+  }
 }

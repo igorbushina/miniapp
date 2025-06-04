@@ -3,65 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f7f8fa" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="description" content="Telegram Mini App 'Живу в…' — объявления по городам" />
   <title>Живу в…</title>
 
-  <!-- Шрифт Rubik -->
+  <!-- Rubik шрифт -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
-
-  <!-- Иконки FontAwesome -->
+  <!-- FontAwesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-
   <!-- Telegram SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <!-- Стили -->
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <main class="container">
-    <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
-
-    <!-- Страна -->
-    <div class="form-group">
-      <label for="country"><i class="fas fa-flag icon"></i> Страна:</label>
-      <select id="country" name="country" required></select>
+    <!-- Заголовок -->
+    <div class="header">
+      <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
     </div>
 
-    <!-- Город -->
-    <div class="form-group">
-      <label for="city"><i class="fas fa-city icon"></i> Город:</label>
-      <select id="city" name="city" required></select>
-    </div>
+    <!-- Основной блок -->
+    <section class="form-section">
+      <!-- Страна -->
+      <div class="form-group">
+        <label for="country"><i class="fas fa-flag icon"></i> Страна</label>
+        <select id="country" required>
+          <option value="" disabled selected>Выберите страну</option>
+        </select>
+      </div>
 
-    <!-- Категория для просмотра -->
-    <div class="form-group" id="viewCategoryBlock">
-      <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория:</label>
-      <select id="viewCategory" name="viewCategory">
-        <option value="">Все категории</option>
-        <option value="Ремонт">Ремонт</option>
-        <option value="Услуги">Услуги</option>
-        <option value="Обучение">Обучение</option>
-        <option value="Жилье">Жилье</option>
-        <option value="Продажа">Продажа</option>
-        <option value="Куплю">Куплю</option>
-        <option value="Знакомства">Знакомства</option>
-        <option value="Новости">Новости</option>
-      </select>
-    </div>
+      <!-- Город -->
+      <div class="form-group">
+        <label for="city"><i class="fas fa-city icon"></i> Город</label>
+        <select id="city" required>
+          <option value="" disabled selected>Выберите город</option>
+        </select>
+      </div>
 
-    <!-- Кнопки -->
-    <div class="buttons" id="mainButtons">
-      <button id="viewBtn" type="button"><i class="fas fa-eye"></i> Посмотреть объявления</button>
-      <button id="addBtn" type="button"><i class="fas fa-plus"></i> Добавить объявление</button>
-    </div>
+      <!-- Категория -->
+      <div class="form-group" id="viewCategoryBlock">
+        <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория</label>
+        <select id="viewCategory">
+          <option value="">Все категории</option>
+          <option value="Ремонт">Ремонт</option>
+          <option value="Услуги">Услуги</option>
+          <option value="Обучение">Обучение</option>
+          <option value="Жилье">Жилье</option>
+          <option value="Продажа">Продажа</option>
+          <option value="Куплю">Куплю</option>
+          <option value="Знакомства">Знакомства</option>
+          <option value="Новости">Новости</option>
+        </select>
+      </div>
+
+      <!-- Кнопки -->
+      <div class="button-group" id="mainButtons">
+        <button id="viewBtn"><i class="fas fa-eye"></i> Посмотреть объявления</button>
+        <button id="addBtn"><i class="fas fa-plus"></i> Добавить объявление</button>
+      </div>
+    </section>
 
     <!-- Форма добавления -->
     <form id="adForm" style="display: none;" autocomplete="off">
       <div class="form-group">
-        <label for="category"><i class="fas fa-folder-plus icon"></i> Категория:</label>
-        <select id="category" name="category" required>
+        <label for="category"><i class="fas fa-folder-plus icon"></i> Категория</label>
+        <select id="category" required>
           <option value="">Выберите категорию</option>
           <option value="Ремонт">Ремонт</option>
           <option value="Услуги">Услуги</option>
@@ -75,23 +83,20 @@
       </div>
 
       <div class="form-group">
-        <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
-        <textarea id="contact" name="contact" rows="2" placeholder="@username или телефон" required></textarea>
+        <label for="contact"><i class="fas fa-user icon"></i> Контакт</label>
+        <textarea id="contact" rows="2" placeholder="@username или телефон" required></textarea>
       </div>
 
       <div class="form-group">
-        <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
-        <textarea id="text" name="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
+        <label for="text"><i class="fas fa-pen icon"></i> Текст объявления</label>
+        <textarea id="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
       </div>
 
       <!-- GDPR -->
       <div class="form-group checkbox" id="gdprWrapper">
         <input type="checkbox" id="gdpr" required />
         <label id="gdprLabel" for="gdpr">
-          Я согласен(а) с
-          <a href="https://gdpr.eu/privacy-notice/" target="_blank" rel="noopener noreferrer">
-            обработкой персональных данных (GDPR)
-          </a>
+          Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank">обработкой персональных данных</a>
         </label>
       </div>
 
@@ -103,19 +108,19 @@
     </form>
   </main>
 
-  <!-- JS отключен -->
+  <!-- JavaScript отключен -->
   <noscript>
-    <p style="text-align:center; padding:20px;">❌ Включите JavaScript для использования приложения</p>
+    <p class="noscript-msg">❌ Включите JavaScript для использования приложения</p>
   </noscript>
 
   <!-- Скрипты -->
   <script src="data.js"></script>
   <script src="script.js"></script>
 
-  <!-- Telegram check -->
+  <!-- Telegram Only -->
   <script>
     if (!(window.Telegram && Telegram.WebApp)) {
-      document.body.innerHTML = "<p style='text-align:center; padding:20px;'>❌ Откройте приложение через Telegram</p>";
+      document.body.innerHTML = "<p class='noscript-msg'>❌ Откройте через Telegram</p>";
     }
   </script>
 </body>
