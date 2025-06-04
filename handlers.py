@@ -1,6 +1,8 @@
 import os
 import json
 import logging
+from datetime import datetime
+import requests
 from dotenv import load_dotenv
 from telegram import (
     Update,
@@ -25,6 +27,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 CHANNEL_ID = os.getenv("CHANNEL_ID")  # Пример: -1002538677330
+SAVE_AD_WEBHOOK = os.getenv("SAVE_AD_WEBHOOK")  # Webhook Make.com
 
 if not WEBAPP_URL:
     logger.warning("⚠️ Переменная WEBAPP_URL не установлена.")
@@ -47,7 +50,7 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="HTML"
     )
 
-# 🟢 WebApp данные
+# 🟢 Обработка WebApp
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
@@ -63,23 +66,22 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         contact = data.get("contact")
         text = data.get("text")
 
-        # ⛔ Блокировка России
+        # Блокировка публикаций из России
         if country == "Россия":
             await update.message.reply_text("⛔ Публикация из России временно недоступна.")
             return
 
+        # Просмотр — всегда в канал
         if action == "view":
-            if country == "Германия" and city == "Гельдерн":
-                await update.message.reply_text(
-                    "📢 Перейдите в канал для просмотра объявлений:",
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("👀 Живу в Гельдерне", url="https://t.me/zhivuv_gelderne")]
-                    ])
-                )
-            else:
-                await update.message.reply_text("📌 Просмотр доступен только для Гельдерна.")
+            await update.message.reply_text(
+                "📢 Перейдите в канал с объявлениями:",
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("📺 Открыть канал", url="https://t.me/ZhivuVChannel")]
+                ])
+            )
             return
 
+        # Публикация
         if action == "add":
             if not all([category, contact, text]):
                 await update.message.reply_text("⚠️ Пожалуйста, заполните все поля.")
@@ -100,6 +102,21 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 "chat_id": CHANNEL_ID
             }
 
+            # ✅ Сохранение в Make Webhook
+            if SAVE_AD_WEBHOOK:
+                try:
+                    requests.post(SAVE_AD_WEBHOOK, json={
+                        "country": country,
+                        "city": city,
+                        "category": category,
+                        "contact": contact,
+                        "text": text,
+                        "timestamp": datetime.utcnow().isoformat()
+                    }, timeout=5)
+                except Exception as e:
+                    logger.warning("⚠️ Ошибка отправки в Webhook", exc_info=True)
+
+            # 📤 Отправка в канал
             await context.bot.send_message(
                 chat_id=CHANNEL_ID,
                 text=post,
@@ -114,7 +131,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logger.error("❌ Ошибка обработки данных WebApp", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при обработке данных.")
 
-# 📸 Фото после объявления
+# 📸 Обработка фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = context.user_data.get("last_post")
@@ -139,17 +156,17 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data.pop("last_post", None)
 
     except Exception as e:
-        logger.error("❌ Ошибка отправки фото", exc_info=True)
+        logger.error("❌ Ошибка при прикреплении фото", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при прикреплении фото.")
 
-# 🪪 Ответ по умолчанию — Chat ID
+# 💬 Вывод Chat ID по умолчанию
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Chat ID: <code>{update.effective_chat.id}</code>",
         parse_mode="HTML"
     )
 
-# 📦 Регистрация хендлеров
+# 🧩 Подключение хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
