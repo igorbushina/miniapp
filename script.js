@@ -1,3 +1,11 @@
+// Словарь с Telegram-группами по городам
+const city_group_usernames = {
+  "Гельдерн": "zhivuv_gelderne",
+  "Берлин": "zhivuv_berlin",
+  "Кёльн": "zhivuv_koeln"
+  // Добавь другие города при необходимости
+};
+
 window.addEventListener("DOMContentLoaded", () => {
   const countrySelect = document.getElementById("country");
   const citySelect = document.getElementById("city");
@@ -18,12 +26,15 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // 📍 Заполнение стран
+  // 📍 Заполнение стран (исключая Россию)
   if (typeof countries === "object") {
-    Object.keys(countries).sort().forEach((country) => {
-      const option = new Option(country, country);
-      countrySelect.appendChild(option);
-    });
+    Object.keys(countries)
+      .filter(country => country !== "Россия")
+      .sort()
+      .forEach((country) => {
+        const option = new Option(country, country);
+        countrySelect.appendChild(option);
+      });
   } else {
     console.error("❌ Ошибка: объект countries не определён.");
   }
@@ -45,14 +56,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // 👁 Просмотр объявлений
   viewBtn.addEventListener("click", () => {
-    // Первый клик — показать выбор категории
     if (viewCategoryBlock.style.display === "none") {
       viewCategoryBlock.style.display = "block";
       viewBtn.innerHTML = '<i class="fas fa-eye"></i> Показать';
       return;
     }
 
-    // Второй клик — отправить данные
     const country = countrySelect.value;
     const city = citySelect.value;
     const category = viewCategorySelect.value;
@@ -72,10 +81,11 @@ window.addEventListener("DOMContentLoaded", () => {
     Telegram.WebApp.sendData(JSON.stringify(payload));
     console.log("📤 View payload:", payload);
 
-    if (country === "Германия" && city === "Гельдерн") {
-      Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
+    const username = city_group_usernames[city];
+    if (username) {
+      Telegram.WebApp.openTelegramLink(`https://t.me/${username}`);
     } else {
-      alert("📌 Просмотр объявлений доступен пока только для Гельдерна.");
+      alert("📌 Просмотр доступен только для городов с активными группами.");
     }
   });
 
@@ -112,7 +122,6 @@ window.addEventListener("DOMContentLoaded", () => {
       text: textInput.value.trim()
     };
 
-    // Валидация
     if (
       !payload.country ||
       !payload.city ||
@@ -132,7 +141,6 @@ window.addEventListener("DOMContentLoaded", () => {
     Telegram.WebApp.sendData(JSON.stringify(payload));
     console.log("📤 Add payload:", payload);
 
-    // Сброс формы
     adForm.reset();
     adForm.style.display = "none";
     viewBtn.style.display = "block";
@@ -144,4 +152,3 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => Telegram.WebApp.close(), 400);
   });
 });
-
