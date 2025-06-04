@@ -11,7 +11,7 @@ from telegram import (
     WebAppInfo,
 )
 from telegram.ext import CommandHandler, MessageHandler, filters, ContextTypes
-from city_group_ids import CITY_GROUP_IDS  # словарь вида {(country, city): chat_id}
+from city_group_ids import CITY_GROUP_IDS  # словарь {(country, city): chat_id}
 
 # Логирование
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +24,7 @@ WEBAPP_URL = os.getenv("WEBAPP_URL")
 if not WEBAPP_URL:
     logger.warning("⚠️ Переменная окружения WEBAPP_URL не установлена.")
 
-# Команда /start
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -33,7 +33,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
-# Команда /getchatid
+# /getchatid — ручная команда
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     await update.message.reply_text(
@@ -41,7 +41,7 @@ async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="HTML"
     )
 
-# Обработка данных из WebApp
+# Обработка WebApp-данных
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
@@ -62,7 +62,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
         if not group_id:
             await update.message.reply_text(
-                "⛔ Публикация доступна только для поддерживаемых городов.\n"
+                "⛔ Публикация доступна только для поддерживаемых городов. "
                 "Сейчас объявления можно размещать только в группе Гельдерна (Германия)."
             )
             return
@@ -85,7 +85,8 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             post = f"""📍 <b>{city}, {country}</b>
 📂 <b>Категория:</b> {category}
 👤 <b>Контакты:</b> {contact}
-📝 <b>Текст:</b> {text}"""
+📝 <b>Текст:</b> {text}
+"""
 
             context.user_data["last_post"] = {
                 "post": post,
@@ -98,15 +99,15 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 parse_mode="HTML"
             )
 
-            logger.info(f"[INFO] Объявление опубликовано в группе: {group_id}")
+            logger.info(f"[INFO] Объявление отправлено в группу: {group_id}")
 
             await update.message.reply_text(
                 "✅ Ваше объявление опубликовано в группе.\n"
-                "📸 Прикрепите фото, если хотите — я добавлю его к объявлению."
+                "📸 Прикрепите фотографию, если хотите — я добавлю её к объявлению."
             )
 
     except Exception as e:
-        logger.error("Ошибка в handle_webapp_data", exc_info=True)
+        logger.error("❌ Ошибка в handle_webapp_data", exc_info=True)
         await update.message.reply_text("⚠️ Произошла ошибка при обработке данных.")
 
 # Обработка фото
@@ -131,20 +132,17 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text("✅ Фото прикреплено к объявлению.")
     except Exception as e:
-        logger.error("Ошибка в handle_photo", exc_info=True)
+        logger.error("❌ Ошибка в handle_photo", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при отправке фото.")
 
-# Отправка chat_id при обычных текстах
-async def send_chat_id_auto(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        if update.message and not update.message.web_app_data:
-            chat_id = update.effective_chat.id
-            await update.message.reply_text(
-                f"Chat ID: <code>{chat_id}</code>",
-                parse_mode="HTML"
-            )
-    except Exception as e:
-        logger.error("Ошибка в send_chat_id_auto", exc_info=True)
+# Временный echo chat_id при любом сообщении
+async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        chat_id = update.effective_chat.id
+        await update.message.reply_text(
+            f"Chat ID: <code>{chat_id}</code>",
+            parse_mode="HTML"
+        )
 
 # Регистрация хендлеров
 def setup_handlers(app):
@@ -152,4 +150,4 @@ def setup_handlers(app):
     app.add_handler(CommandHandler("getchatid", get_chat_id))
     app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, send_chat_id_auto))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo_chat_id))  # временно
