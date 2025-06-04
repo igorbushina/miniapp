@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Пример: https://miniapp-xx0j.onrender.com/webhook
-WEBHOOK_PATH = "/webhook"
 PORT = int(os.getenv("PORT", 10000))
 
 # Логирование
@@ -30,11 +29,10 @@ logger.info("✅ Хендлеры подключены.")
 
 # 🟢 Запуск webhook-сервера
 if __name__ == "__main__":
-    logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}{WEBHOOK_PATH}")
+    logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
     application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        webhook_url=WEBHOOK_URL + WEBHOOK_PATH,
-        url_path=WEBHOOK_PATH,
+        webhook_url=WEBHOOK_URL,  # уже включает путь
         allowed_updates=["message", "callback_query"]
     )

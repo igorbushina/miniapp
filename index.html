@@ -23,24 +23,18 @@
   <main class="container">
     <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
 
-    <!-- Выбор страны -->
+    <!-- Страна -->
     <label for="country"><i class="fas fa-flag icon"></i> Страна:</label>
     <select id="country" name="country" required aria-label="Выберите страну"></select>
 
-    <!-- Выбор города -->
+    <!-- Город -->
     <label for="city"><i class="fas fa-city icon"></i> Город:</label>
     <select id="city" name="city" required aria-label="Выберите город"></select>
 
-    <!-- Основные действия -->
-    <div class="buttons" id="mainButtons">
-      <button id="viewBtn" type="button"><i class="fas fa-eye"></i> Посмотреть объявления</button>
-      <button id="addBtn" type="button"><i class="fas fa-plus"></i> Добавить объявление</button>
-    </div>
-
     <!-- Категория для просмотра -->
-    <div class="form-group" id="viewCategoryBlock" style="display: none; margin-top: 20px;">
+    <div class="form-group" id="viewCategoryBlock" style="margin-top: 20px;">
       <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория:</label>
-      <select id="viewCategory">
+      <select id="viewCategory" name="viewCategory">
         <option value="">Все категории</option>
         <option value="Ремонт">Ремонт</option>
         <option value="Услуги">Услуги</option>
@@ -53,7 +47,13 @@
       </select>
     </div>
 
-    <!-- Форма добавления объявления -->
+    <!-- Кнопки -->
+    <div class="buttons" id="mainButtons">
+      <button id="viewBtn" type="button"><i class="fas fa-eye"></i> Посмотреть объявления</button>
+      <button id="addBtn" type="button"><i class="fas fa-plus"></i> Добавить объявление</button>
+    </div>
+
+    <!-- Добавление объявления -->
     <form id="adForm" style="display: none; margin-top: 30px;" autocomplete="off">
       <div class="form-group">
         <label for="category"><i class="fas fa-folder-open icon"></i> Категория:</label>
@@ -80,7 +80,7 @@
         <textarea id="text" name="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
       </div>
 
-      <!-- GDPR согласие -->
+      <!-- GDPR -->
       <div class="form-group checkbox">
         <input type="checkbox" id="gdpr" name="gdpr" required />
         <label for="gdpr">
@@ -91,7 +91,6 @@
         </label>
       </div>
 
-      <!-- Кнопки управления формой -->
       <div class="form-buttons">
         <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить объявление</button>
         <button type="button" id="backBtn" class="back-button"><i class="fas fa-arrow-left"></i> Назад</button>
@@ -99,7 +98,7 @@
     </form>
   </main>
 
-  <!-- Fallback без JS -->
+  <!-- Без JS -->
   <noscript>
     <p style="text-align:center; padding:20px;">❌ Включите JavaScript для использования приложения</p>
   </noscript>
@@ -108,7 +107,7 @@
   <script src="data.js"></script>
   <script src="script.js"></script>
 
-  <!-- Проверка Telegram WebApp -->
+  <!-- Проверка Telegram -->
   <script>
     if (!window.Telegram || !Telegram.WebApp) {
       document.body.innerHTML = "<p style='text-align:center; padding:20px;'>❌ Пожалуйста, откройте через Telegram</p>";

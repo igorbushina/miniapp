@@ -144,3 +144,4 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => Telegram.WebApp.close(), 400);
   });
 });
+
