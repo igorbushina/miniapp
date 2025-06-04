@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -25,11 +25,11 @@
 
     <!-- Выбор страны -->
     <label for="country"><i class="fas fa-flag icon"></i> Страна:</label>
-    <select id="country" aria-label="Выберите страну"></select>
+    <select id="country" aria-label="Выберите страну" required></select>
 
     <!-- Выбор города -->
     <label for="city"><i class="fas fa-city icon"></i> Город:</label>
-    <select id="city" aria-label="Выберите город"></select>
+    <select id="city" aria-label="Выберите город" required></select>
 
     <!-- Основные кнопки -->
     <div class="buttons" id="mainButtons">
@@ -84,26 +84,6 @@
     if (!window.Telegram || !Telegram.WebApp) {
       document.body.innerHTML = "<p style='text-align:center;padding:20px;'>❌ Откройте приложение через Telegram</p>";
     }
-  </script>
-
-  <!-- Управление кнопками -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const addBtn = document.getElementById("addBtn");
-      const backBtn = document.getElementById("backBtn");
-      const adForm = document.getElementById("adForm");
-      const mainButtons = document.getElementById("mainButtons");
-
-      addBtn.addEventListener("click", () => {
-        adForm.style.display = "block";
-        mainButtons.style.display = "none";
-      });
-
-      backBtn.addEventListener("click", () => {
-        adForm.style.display = "none";
-        mainButtons.style.display = "flex";
-      });
-    });
   </script>
 
   <!-- Подключение логики -->

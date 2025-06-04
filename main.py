@@ -18,13 +18,11 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Пример: https://your-app.onrender.com/webhook
 PORT = int(os.getenv("PORT", "10000"))
 
-# Проверка обязательных переменных
+# ✅ Проверка обязательных переменных
 if not BOT_TOKEN:
     raise ValueError("❌ Переменная окружения BOT_TOKEN не установлена.")
 if not WEBHOOK_URL:
     raise ValueError("❌ Переменная окружения WEBHOOK_URL не установлена.")
-if not PORT:
-    raise ValueError("❌ Переменная окружения PORT не установлена.")
 
 logger.info("🚀 Запуск Telegram-бота...")
 
