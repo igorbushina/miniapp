@@ -1,6 +1,6 @@
 :root {
   --font: 'Rubik', sans-serif;
-  --blue: #229ED9; /* Telegram blue */
+  --blue: #229ED9;
   --blue-hover: #1c88c7;
   --white: #ffffff;
   --gray-bg: #f2f2f7;
@@ -8,47 +8,40 @@
   --text-main: #2c3e50;
   --text-muted: #6c757d;
   --radius: 12px;
-  --pill-radius: 999px;
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   --transition: all 0.2s ease-in-out;
   --background-gradient: linear-gradient(180deg, #ffffff, #f9f9f9);
 }
 
-/* 🌍 Базовые настройки */
+/* Базовый фон и прокрутка */
 body {
   font-family: var(--font);
   margin: 0;
   padding: 0;
   background: var(--background-gradient);
   min-height: 100vh;
+  overflow-y: auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
-/* 🧾 Контейнер */
+/* Контейнер */
 main.container {
   background: var(--white);
+  margin: 24px auto;
   padding: 24px;
   border-radius: 24px;
   box-shadow: var(--shadow);
-  max-width: 420px;
-  width: 90%;
+  max-width: 460px;
+  width: 92%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-/* 🔠 Заголовок */
-.header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eaeaea;
-}
-
+/* Заголовок */
 h1 {
   text-align: center;
   font-size: 24px;
@@ -57,7 +50,7 @@ h1 {
   margin: 0;
 }
 
-/* 🏷️ Метки */
+/* Метки */
 label {
   font-size: 15px;
   font-weight: 500;
@@ -66,20 +59,27 @@ label {
   display: block;
 }
 
-/* 🔲 Поля */
+/* Группы */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+/* Поля */
 select,
 textarea,
 input[type="text"] {
   width: 100%;
-  font-size: 15px;
-  padding: 10px 12px;
+  font-size: 16px;
+  padding: 12px 14px;
   border: 1px solid var(--input-border);
   border-radius: var(--radius);
-  box-sizing: border-box;
   background: var(--white);
   color: var(--text-main);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
-  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 select:focus,
@@ -89,22 +89,16 @@ input:focus {
   outline: none;
 }
 
-/* 📦 Группы */
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-/* 📜 GDPR */
+/* GDPR */
 #gdprWrapper {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 12px;
+  margin: 8px 0 20px;
 }
 
 #gdpr {
-  transform: scale(1.4);
+  transform: scale(1.2);
   margin-top: 4px;
 }
 
@@ -118,33 +112,30 @@ input:focus {
   color: var(--blue);
   text-decoration: none;
 }
-
 #gdprLabel a:hover {
   text-decoration: underline;
 }
 
-/* 🔘 Кнопки */
+/* Кнопки */
 button {
-  padding: 12px 18px;
+  padding: 14px 18px;
   font-size: 16px;
   font-weight: 500;
-  border-radius: var(--pill-radius);
+  border-radius: var(--radius);
   border: none;
   cursor: pointer;
   transition: var(--transition);
   width: 100%;
-  margin-top: 8px;
-  box-sizing: border-box;
 }
 
 #viewBtn {
-  background: var(--white);
+  background: #e9f0fb;
   color: var(--blue);
-  border: 1.5px solid var(--blue);
+  border: 1px solid var(--blue);
 }
 
 #viewBtn:hover {
-  background: #e6f7ff;
+  background: #d6e6f7;
 }
 
 #addBtn,
@@ -152,41 +143,47 @@ button {
   background: var(--blue);
   color: var(--white);
 }
-
 #addBtn:hover,
 #submitBtn:hover {
   background: var(--blue-hover);
 }
 
 #backBtn {
-  background: #fcebea;
+  background: #f8d7da;
   color: #721c24;
-  border: 1px solid #f5c6cb;
 }
-
 #backBtn:hover {
   background: #f1b0b7;
   color: white;
 }
 
-/* 🧾 Сообщение без JS */
+/* Кнопки формы */
+.form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Сообщение без JS */
 .noscript-msg {
   text-align: center;
   color: red;
   padding: 20px;
 }
 
-/* 📱 Адаптация */
+/* Мобильная адаптация */
 @media (max-width: 480px) {
   main.container {
     padding: 16px;
+    gap: 16px;
   }
-
   h1 {
     font-size: 22px;
   }
-
   button {
+    font-size: 15px;
+  }
+  select, textarea {
     font-size: 15px;
   }
 }
