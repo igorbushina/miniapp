@@ -1,38 +1,39 @@
 import os
 import logging
+from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder
 from handlers import setup_handlers
-from dotenv import load_dotenv
 
-# Загрузка .env
+# 🔧 Загрузка переменных окружения
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Пример: https://miniapp-xx0j.onrender.com/webhook
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Пример: https://your-domain.onrender.com/webhook
 PORT = int(os.getenv("PORT", 10000))
 
-# Логирование
+# 📋 Логирование
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# ✅ Проверка переменных
 if not TOKEN:
     raise ValueError("❌ Переменная BOT_TOKEN не установлена в .env")
 
 if not WEBHOOK_URL:
     raise ValueError("❌ Переменная WEBHOOK_URL не установлена в .env")
 
-# 📦 Создание приложения Telegram
+# 🤖 Инициализация Telegram Application
 application = ApplicationBuilder().token(TOKEN).build()
 
-# 📌 Регистрация хендлеров
+# 🔌 Подключение хендлеров
 setup_handlers(application)
 logger.info("✅ Хендлеры подключены.")
 
-# 🟢 Запуск webhook-сервера
+# 🚀 Запуск Webhook-сервера
 if __name__ == "__main__":
-    logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
+    logger.info(f"🌐 Webhook запускается на порту {PORT}, по адресу {WEBHOOK_URL}")
     application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        webhook_url=WEBHOOK_URL,  # путь включён здесь
+        webhook_url=WEBHOOK_URL,
         allowed_updates=["message", "callback_query"]
     )

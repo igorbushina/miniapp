@@ -16,19 +16,16 @@ from telegram.ext import (
     ContextTypes,
     filters,
 )
-from city_group_usernames import CITY_GROUP_USERNAMES
-from city_group_ids import CITY_GROUP_IDS
 
 # 🔧 Логирование
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 🌍 Переменные
+# 🌍 Переменные окружения
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
-CHANNEL_ID = os.getenv("CHANNEL_ID")  # -1002538677330
+CHANNEL_ID = os.getenv("CHANNEL_ID")  # Пример: -1002538677330
 
-# ✅ Проверка
 if not WEBAPP_URL:
     logger.warning("⚠️ Переменная WEBAPP_URL не установлена.")
 if not CHANNEL_ID:
@@ -38,22 +35,26 @@ if not CHANNEL_ID:
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
     reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    await update.message.reply_text("Привет! Нажми кнопку ниже, чтобы выбрать страну и город:", reply_markup=reply_markup)
+    await update.message.reply_text(
+        "👋 Привет! Нажми кнопку ниже, чтобы выбрать страну и город:",
+        reply_markup=reply_markup
+    )
 
 # /getchatid
 async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        f"Chat ID: <code>{update.effective_chat.id}</code>", parse_mode="HTML"
+        f"Chat ID: <code>{update.effective_chat.id}</code>",
+        parse_mode="HTML"
     )
 
-# WebApp обработка
+# 🟢 WebApp данные
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
             return
 
         data = json.loads(update.message.web_app_data.data)
-        logger.info(f"[DEBUG] WebApp data: {data}")
+        logger.info(f"[WebApp] Получены данные: {data}")
 
         action = data.get("action")
         country = data.get("country")
@@ -62,22 +63,21 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         contact = data.get("contact")
         text = data.get("text")
 
-        # Проверка страны (исключаем Россию)
+        # ⛔ Блокировка России
         if country == "Россия":
             await update.message.reply_text("⛔ Публикация из России временно недоступна.")
             return
 
         if action == "view":
-            username = CITY_GROUP_USERNAMES.get((country, city))
-            if username:
+            if country == "Германия" and city == "Гельдерн":
                 await update.message.reply_text(
-                    f"📍 Переходите в Telegram-группу {city}:",
+                    "📢 Перейдите в канал для просмотра объявлений:",
                     reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(f"👥 Группа {city}", url=f"https://t.me/{username}")]
+                        [InlineKeyboardButton("👀 Живу в Гельдерне", url="https://t.me/zhivuv_gelderne")]
                     ])
                 )
             else:
-                await update.message.reply_text("⛔ Группа для выбранного города пока недоступна.")
+                await update.message.reply_text("📌 Просмотр доступен только для Гельдерна.")
             return
 
         if action == "add":
@@ -90,7 +90,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             post = (
                 f"<b>📍 {city}, {country}</b>\n"
                 f"<b>📂 Категория:</b> {category}\n"
-                f"<b>👤 Контакты:</b> {contact}\n"
+                f"<b>👤 Контакт:</b> {contact}\n"
                 f"<b>📝 Текст:</b> {text}\n\n"
                 f"{hashtags}"
             )
@@ -107,24 +107,23 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             )
 
             await update.message.reply_text(
-                "✅ Объявление опубликовано в канале.\n"
-                "📸 Пришлите фото — я добавлю его к объявлению."
+                "✅ Объявление опубликовано.\n📸 Пришлите фото — я добавлю его."
             )
 
     except Exception as e:
-        logger.error("❌ Ошибка WebApp данных", exc_info=True)
+        logger.error("❌ Ошибка обработки данных WebApp", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при обработке данных.")
 
-# Фото
+# 📸 Фото после объявления
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = context.user_data.get("last_post")
         if not data:
-            await update.message.reply_text("⚠️ Сначала создайте объявление.")
+            await update.message.reply_text("⚠️ Сначала отправьте текст объявления.")
             return
 
         if not update.message.photo:
-            await update.message.reply_text("⚠️ Не получено фото.")
+            await update.message.reply_text("⚠️ Фото не получено.")
             return
 
         photo_id = update.message.photo[-1].file_id
@@ -136,20 +135,21 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML"
         )
 
-        await update.message.reply_text("✅ Фото добавлено.")
+        await update.message.reply_text("✅ Фото добавлено к объявлению.")
         context.user_data.pop("last_post", None)
 
     except Exception as e:
         logger.error("❌ Ошибка отправки фото", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при прикреплении фото.")
 
-# Echo
+# 🪪 Ответ по умолчанию — Chat ID
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        f"Chat ID: <code>{update.effective_chat.id}</code>", parse_mode="HTML"
+        f"Chat ID: <code>{update.effective_chat.id}</code>",
+        parse_mode="HTML"
     )
 
-# Хендлеры
+# 📦 Регистрация хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("getchatid", get_chat_id))
