@@ -10,27 +10,27 @@ window.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addBtn");
   const backBtn = document.getElementById("backBtn");
 
-  // ✅ Проверка окружения
+  // ✅ Проверка окружения Telegram
   if (!window.Telegram?.WebApp?.sendData) {
     alert("⚠️ Откройте мини-приложение через Telegram.");
     return;
   }
 
-  // 📍 Заполнение списка стран
+  // 📍 Заполнение стран
   if (typeof countries === "object") {
     Object.keys(countries).sort().forEach((country) => {
       const option = new Option(country, country);
       countrySelect.appendChild(option);
     });
   } else {
-    console.error("❌ Ошибка: объект countries не найден.");
+    console.error("❌ Ошибка: объект countries не определён.");
   }
 
-  // 📍 Обновление списка городов при выборе страны
+  // 📍 Обновление городов при выборе страны
   countrySelect.addEventListener("change", () => {
-    const selected = countrySelect.value;
-    const cities = countries[selected] || [];
-    citySelect.innerHTML = ""; // очистка старых опций
+    const selectedCountry = countrySelect.value;
+    const cities = countries[selectedCountry] || [];
+    citySelect.innerHTML = "";
 
     cities.sort().forEach((city) => {
       const option = new Option(city, city);
@@ -38,7 +38,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 🟢 Первичная инициализация
+  // 🟢 Инициализация при загрузке
   countrySelect.dispatchEvent(new Event("change"));
 
   // 👁 Просмотр объявлений
@@ -55,13 +55,14 @@ window.addEventListener("DOMContentLoaded", () => {
     Telegram.WebApp.sendData(JSON.stringify(payload));
     console.log("📤 View payload:", payload);
 
-    // Открытие ссылки для определённого города
     if (country === "Германия" && city === "Гельдерн") {
       Telegram.WebApp.openTelegramLink("https://t.me/zhivuv_gelderne");
+    } else {
+      alert("📌 Просмотр объявлений доступен пока только для Гельдерна.");
     }
   });
 
-  // ➕ Показ формы
+  // ➕ Показ формы добавления
   addBtn.addEventListener("click", () => {
     adForm.style.display = "block";
     viewBtn.style.display = "none";
@@ -69,7 +70,7 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "block";
   });
 
-  // ⬅️ Назад
+  // ⬅️ Назад к меню
   backBtn.addEventListener("click", () => {
     adForm.style.display = "none";
     viewBtn.style.display = "block";
@@ -77,7 +78,7 @@ window.addEventListener("DOMContentLoaded", () => {
     backBtn.style.display = "none";
   });
 
-  // 📤 Отправка формы
+  // 📤 Обработка формы отправки
   adForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -90,7 +91,7 @@ window.addEventListener("DOMContentLoaded", () => {
       text: textInput.value.trim()
     };
 
-    // Валидация данных
+    // Валидация
     if (
       !payload.country ||
       !payload.city ||
@@ -98,7 +99,7 @@ window.addEventListener("DOMContentLoaded", () => {
       !payload.contact ||
       !payload.text
     ) {
-      alert("⚠️ Заполните все поля.");
+      alert("⚠️ Пожалуйста, заполните все поля.");
       return;
     }
 
@@ -110,13 +111,13 @@ window.addEventListener("DOMContentLoaded", () => {
     Telegram.WebApp.sendData(JSON.stringify(payload));
     console.log("📤 Add payload:", payload);
 
+    // Сброс формы
     adForm.reset();
     adForm.style.display = "none";
     viewBtn.style.display = "block";
     addBtn.style.display = "block";
     backBtn.style.display = "none";
 
-    // Закрытие окна после небольшой задержки
     setTimeout(() => Telegram.WebApp.close(), 400);
   });
 });
