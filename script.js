@@ -10,6 +10,8 @@ const textInput = document.getElementById("text");
 const gdprCheckbox = document.getElementById("gdpr");
 const backBtn = document.getElementById("backBtn");
 const submitBtn = document.getElementById("submitBtn");
+const mainButtons = document.getElementById("mainButtons");
+const viewCategoryBlock = document.getElementById("viewCategoryBlock");
 
 // ▶️ Заполнение стран
 function populateCountries() {
@@ -23,7 +25,7 @@ function populateCountries() {
   });
 }
 
-// ▶️ Заполнение городов по стране
+// ▶️ Заполнение городов
 function populateCities(country) {
   citySelect.innerHTML = "<option value='' selected disabled>Выберите город</option>";
   const cities = window.countries?.[country] || [];
@@ -40,11 +42,14 @@ function populateCities(country) {
 // ▶️ Очистка формы
 function resetForm() {
   adForm.style.display = "none";
-  adForm.reset();
+  mainButtons.style.display = "flex";
+  viewCategoryBlock.style.display = "block";
+
   categorySelect.value = "";
   contactInput.value = "";
   textInput.value = "";
   gdprCheckbox.checked = false;
+
   submitBtn.disabled = false;
   submitBtn.innerText = "Отправить";
 }
@@ -56,7 +61,10 @@ function showForm() {
     return;
   }
 
+  mainButtons.style.display = "none";
+  viewCategoryBlock.style.display = "none";
   adForm.style.display = "flex";
+
   requestAnimationFrame(() => {
     adForm.scrollIntoView({ behavior: "smooth" });
   });
@@ -123,5 +131,5 @@ function init() {
   });
 }
 
-// ▶️ Запуск
+// ▶️ Старт
 document.addEventListener("DOMContentLoaded", init);
