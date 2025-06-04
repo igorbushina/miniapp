@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 # 🌍 Переменные окружения
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
-CHANNEL_ID = os.getenv("CHANNEL_ID")  # Пример: -1002538677330
+CHANNEL_ID = os.getenv("CHANNEL_ID")
 
 if not WEBAPP_URL:
     logger.warning("⚠️ Переменная WEBAPP_URL не установлена.")
@@ -34,20 +34,20 @@ if not CHANNEL_ID:
 # /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     await update.message.reply_text(
-        "👋 Привет! Нажми кнопку ниже, чтобы выбрать страну и город:",
-        reply_markup=reply_markup
+        "👋 Привет! Нажми кнопку ниже, чтобы открыть мини-приложение:",
+        reply_markup=markup
     )
 
-# 🟢 Обработка WebApp
+# 📦 Обработка WebApp-данных
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         if not update.message or not update.message.web_app_data:
             return
 
         data = json.loads(update.message.web_app_data.data)
-        logger.info(f"[WebApp] Получены данные: {data}")
+        logger.info(f"[WebApp] Получено: {data}")
 
         action = data.get("action")
         country = data.get("country")
@@ -55,30 +55,22 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         category = data.get("category")
         contact = data.get("contact")
         text = data.get("text")
+        gdpr = data.get("gdpr")
 
-        # Блокировка публикаций из России
         if country == "Россия":
             await update.message.reply_text("⛔ Публикация из России временно недоступна.")
             return
 
-        # Просмотр объявлений — всегда в единый канал
-        if action == "view":
-            await update.message.reply_text(
-                "📢 Перейдите в канал с объявлениями:",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("📺 Открыть канал", url="https://t.me/ZhivuVChannel")]
-                ])
-            )
-            return
-
-        # Добавление объявления
         if action == "add":
-            if not all([category, contact, text]):
+            if not all([country, city, category, contact, text]):
                 await update.message.reply_text("⚠️ Пожалуйста, заполните все поля.")
                 return
 
-            hashtags = f"#{country.replace(' ', '')} #{city.replace(' ', '')} #{category.replace(' ', '')}"
+            if not gdpr:
+                await update.message.reply_text("⚠️ Вы должны согласиться с обработкой персональных данных (GDPR).")
+                return
 
+            hashtags = f"#{country.replace(' ', '')} #{city.replace(' ', '')} #{category.replace(' ', '')}"
             post = (
                 f"<b>📍 {city}, {country}</b>\n"
                 f"<b>📂 Категория:</b> {category}\n"
@@ -99,19 +91,19 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             )
 
             await update.message.reply_text(
-                "✅ Объявление опубликовано.\n📸 Пришлите фото — я добавлю его."
+                "✅ Объявление опубликовано!\n📸 Теперь вы можете отправить фото, и я прикреплю его к объявлению."
             )
 
     except Exception as e:
-        logger.error("❌ Ошибка обработки данных WebApp", exc_info=True)
-        await update.message.reply_text("⚠️ Ошибка при обработке данных.")
+        logger.error("❌ Ошибка при обработке WebApp данных", exc_info=True)
+        await update.message.reply_text("⚠️ Ошибка при обработке данных. Попробуйте снова.")
 
-# 📸 Приём фото после публикации
+# 📸 Обработка фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = context.user_data.get("last_post")
         if not data:
-            await update.message.reply_text("⚠️ Сначала отправьте текст объявления.")
+            await update.message.reply_text("⚠️ Сначала опубликуйте текст объявления.")
             return
 
         if not update.message.photo:
@@ -127,17 +119,17 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML"
         )
 
-        await update.message.reply_text("✅ Фото добавлено к объявлению.")
+        await update.message.reply_text("📸 Фото успешно добавлено!")
         context.user_data.pop("last_post", None)
 
     except Exception as e:
-        logger.error("❌ Ошибка при прикреплении фото", exc_info=True)
-        await update.message.reply_text("⚠️ Ошибка при прикреплении фото.")
+        logger.error("❌ Ошибка при добавлении фото", exc_info=True)
+        await update.message.reply_text("⚠️ Ошибка при добавлении фото.")
 
 # 💬 Ответ по умолчанию — вывод Chat ID
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        f"Chat ID: <code>{update.effective_chat.id}</code>",
+        f"Ваш Chat ID: <code>{update.effective_chat.id}</code>",
         parse_mode="HTML"
     )
 
