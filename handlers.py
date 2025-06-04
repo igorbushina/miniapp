@@ -4,11 +4,9 @@ import logging
 from dotenv import load_dotenv
 from telegram import (
     Update,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton,
-    ReplyKeyboardMarkup,
-    KeyboardButton,
     WebAppInfo,
+    KeyboardButton,
+    ReplyKeyboardMarkup
 )
 from telegram.ext import (
     CommandHandler,
@@ -31,7 +29,7 @@ if not WEBAPP_URL:
 if not CHANNEL_ID:
     raise ValueError("❌ Переменная CHANNEL_ID не установлена в .env")
 
-# /start
+# 🚀 /start с кнопкой запуска Mini App
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
     markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -57,19 +55,22 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         text = data.get("text")
         gdpr = data.get("gdpr")
 
+        # 🔒 Блокировка по стране
         if country == "Россия":
             await update.message.reply_text("⛔ Публикация из России временно недоступна.")
             return
 
         if action == "add":
+            # 🔍 Проверка полей
             if not all([country, city, category, contact, text]):
                 await update.message.reply_text("⚠️ Пожалуйста, заполните все поля.")
                 return
 
             if not gdpr:
-                await update.message.reply_text("⚠️ Вы должны согласиться с обработкой персональных данных (GDPR).")
+                await update.message.reply_text("⚠️ Вы должны подтвердить согласие на обработку персональных данных.")
                 return
 
+            # 🧷 Хештеги
             hashtags = f"#{country.replace(' ', '')} #{city.replace(' ', '')} #{category.replace(' ', '')}"
             post = (
                 f"<b>📍 {city}, {country}</b>\n"
@@ -91,14 +92,14 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             )
 
             await update.message.reply_text(
-                "✅ Объявление опубликовано!\n📸 Теперь вы можете отправить фото, и я прикреплю его к объявлению."
+                "✅ Объявление опубликовано!\n📸 При желании вы можете отправить фото — я прикреплю его к объявлению."
             )
 
     except Exception as e:
         logger.error("❌ Ошибка при обработке WebApp данных", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при обработке данных. Попробуйте снова.")
 
-# 📸 Обработка фото
+# 📸 Обработка отправки фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = context.user_data.get("last_post")
@@ -119,14 +120,14 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML"
         )
 
-        await update.message.reply_text("📸 Фото успешно добавлено!")
+        await update.message.reply_text("📸 Фото успешно прикреплено!")
         context.user_data.pop("last_post", None)
 
     except Exception as e:
         logger.error("❌ Ошибка при добавлении фото", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при добавлении фото.")
 
-# 💬 Ответ по умолчанию — вывод Chat ID
+# 🪪 Ответ по умолчанию — Chat ID
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Ваш Chat ID: <code>{update.effective_chat.id}</code>",
