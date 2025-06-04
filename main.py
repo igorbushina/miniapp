@@ -1,47 +1,43 @@
 import os
 import logging
-from dotenv import load_dotenv
+import asyncio
 from telegram.ext import ApplicationBuilder
 from handlers import setup_handlers
+from dotenv import load_dotenv
 
-# 🔧 Логирование
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
-)
+# Загрузка .env
+load_dotenv()
+TOKEN = os.getenv("BOT_TOKEN")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # Пример: https://miniapp-xx0j.onrender.com/webhook
+WEBHOOK_PATH = "/webhook"
+PORT = int(os.getenv("PORT", 10000))
+
+# Логирование
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# 📦 Загрузка .env
-load_dotenv()
+if not TOKEN:
+    raise ValueError("❌ Переменная BOT_TOKEN не установлена в .env")
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_HOST = os.getenv("WEBHOOK_URL")  # Пример: https://your-app.onrender.com
-WEBHOOK_PATH = "/webhook"
-WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
-PORT = int(os.getenv("PORT", "10000"))
+if not WEBHOOK_URL:
+    raise ValueError("❌ Переменная WEBHOOK_URL не установлена в .env")
 
-# ✅ Проверка переменных
-if not BOT_TOKEN:
-    raise ValueError("❌ Переменная окружения BOT_TOKEN не установлена.")
-if not WEBHOOK_HOST:
-    raise ValueError("❌ Переменная окружения WEBHOOK_URL не установлена.")
+# Запуск бота
+async def main():
+    application = ApplicationBuilder().token(TOKEN).build()
 
-logger.info("🚀 Запуск Telegram-бота...")
+    # Подключаем хендлеры
+    setup_handlers(application)
+    logger.info("✅ Хендлеры подключены.")
 
-# 🧩 Инициализация приложения
-application = ApplicationBuilder().token(BOT_TOKEN).build()
+    # Запуск Webhook
+    logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}{WEBHOOK_PATH}")
+    application.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        webhook_url=WEBHOOK_URL + WEBHOOK_PATH,
+        url_path=WEBHOOK_PATH,  # ✅ вот правильный аргумент
+    )
 
-# 📌 Подключение всех хендлеров
-setup_handlers(application)
-
-logger.info("✅ Хендлеры подключены.")
-logger.info(f"🌐 Webhook запускается на порту {PORT} по адресу {WEBHOOK_URL}")
-
-# ▶️ Запуск webhook-сервера
-application.run_webhook(
-    listen="0.0.0.0",
-    port=PORT,
-    webhook_path=WEBHOOK_PATH,
-    webhook_url=WEBHOOK_URL,
-    allowed_updates=["message", "callback_query"]
-)
+if __name__ == "__main__":
+    asyncio.run(main())
