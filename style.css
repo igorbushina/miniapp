@@ -1,44 +1,46 @@
 :root {
   --font: 'Rubik', sans-serif;
-  --blue: #1a73e8;
-  --blue-hover: #1669c1;
+  --blue: #2c7be5;
+  --blue-light: #edf4ff;
+  --blue-hover: #1b6edc;
+  --blue-text: #1c3c78;
+  --gray-text: #6c757d;
+  --gray-bg: #f9f9f9;
+  --danger: #f44336;
   --white: #ffffff;
-  --gray-bg: #f1f3f4;
-  --input-border: #cdd1d4;
-  --text-main: #1c3f75;
-  --text-muted: #5f7eab;
   --radius: 12px;
-  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   --transition: all 0.2s ease-in-out;
-  --background-gradient: linear-gradient(180deg, #e0f2d8, #c5e4b5);
+  --bg-gradient: linear-gradient(180deg, #d7f3d8, #f4fff5);
 }
 
 body {
   font-family: var(--font);
   margin: 0;
   padding: 0;
-  background: var(--background-gradient);
+  background: var(--bg-gradient);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  overflow-y: auto;
+  color: var(--blue-text);
 }
 
 main.container {
   background: var(--white);
   margin: 24px auto;
   padding: 24px;
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: var(--shadow);
-  max-width: 460px;
   width: 92%;
-  box-sizing: border-box;
+  max-width: 460px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  box-sizing: border-box;
 }
 
+/* Заголовок */
 h1 {
   text-align: center;
   font-size: 24px;
@@ -47,34 +49,46 @@ h1 {
   margin: 0;
 }
 
-/* Элементы формы */
-label {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-  display: block;
+.icon {
+  margin-right: 6px;
 }
 
+/* Формы */
+.form-section,
+#adForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Группы */
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  gap: 6px;
 }
 
+/* Метки */
+label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--blue-text);
+}
+
+/* Поля */
 select,
 textarea,
 input[type="text"] {
   width: 100%;
   font-size: 16px;
   padding: 12px 14px;
-  border: 1px solid var(--input-border);
+  border: 1px solid #ced4da;
   border-radius: var(--radius);
   background: var(--white);
-  color: var(--text-main);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-  transition: var(--transition);
+  color: #2d3c6a;
   box-sizing: border-box;
+  resize: none;
+  transition: var(--transition);
 }
 
 select:focus,
@@ -84,11 +98,11 @@ input:focus {
   outline: none;
 }
 
+/* GDPR */
 #gdprWrapper {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 12px;
 }
 
 #gdpr {
@@ -98,7 +112,7 @@ input:focus {
 
 #gdprLabel {
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--gray-text);
   line-height: 1.4;
 }
 
@@ -106,15 +120,16 @@ input:focus {
   color: var(--blue);
   text-decoration: none;
 }
+
 #gdprLabel a:hover {
   text-decoration: underline;
 }
 
 /* Кнопки */
 button {
-  padding: 14px 18px;
+  padding: 14px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: var(--radius);
   border: none;
   cursor: pointer;
@@ -123,12 +138,13 @@ button {
 }
 
 #viewBtn {
-  background: #e3f2fd;
+  background: var(--blue-light);
   color: var(--blue);
   border: 1px solid var(--blue);
 }
+
 #viewBtn:hover {
-  background: #d0e7fc;
+  background: #d0e5ff;
 }
 
 #addBtn,
@@ -136,27 +152,36 @@ button {
   background: var(--blue);
   color: var(--white);
 }
+
 #addBtn:hover,
 #submitBtn:hover {
   background: var(--blue-hover);
 }
 
 #backBtn {
-  background: #ffebee;
-  color: #b71c1c;
+  background: #dee2e6;
+  color: #2c3e50;
 }
 #backBtn:hover {
-  background: #ffcdd2;
+  background: #cbd3da;
 }
 
-/* Группа кнопок формы */
+/* Кнопки формы */
 .form-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* Адаптация */
+/* Сообщение при отключённом JS */
+.noscript-msg {
+  text-align: center;
+  color: var(--danger);
+  font-size: 16px;
+  padding: 20px;
+}
+
+/* Мобильная адаптация */
 @media (max-width: 480px) {
   main.container {
     padding: 16px;
@@ -167,7 +192,10 @@ button {
     font-size: 22px;
   }
 
-  button,
+  button {
+    font-size: 15px;
+  }
+
   select,
   textarea {
     font-size: 15px;
