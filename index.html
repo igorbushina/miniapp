@@ -20,12 +20,12 @@
 <body>
   <main class="container">
     <!-- Заголовок -->
-    <div class="header">
+    <div class="header" style="margin-bottom: 12px;">
       <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
     </div>
 
     <!-- Основной блок -->
-    <section class="form-section">
+    <section class="form-section" style="display: flex; flex-direction: column; gap: 16px;">
       <!-- Страна -->
       <div class="form-group">
         <label for="country"><i class="fas fa-flag icon"></i> Страна</label>
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Категория -->
-      <div class="form-group" id="viewCategoryBlock">
+      <div class="form-group">
         <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория</label>
         <select id="viewCategory">
           <option value="">Все категории</option>
@@ -59,14 +59,14 @@
       </div>
 
       <!-- Кнопки -->
-      <div class="button-group" id="mainButtons">
+      <div class="button-group" style="display: flex; flex-direction: column; gap: 12px;">
         <button id="viewBtn"><i class="fas fa-eye"></i> Посмотреть объявления</button>
         <button id="addBtn"><i class="fas fa-plus"></i> Добавить объявление</button>
       </div>
     </section>
 
     <!-- Форма добавления -->
-    <form id="adForm" style="display: none;" autocomplete="off">
+    <form id="adForm" style="display: none; margin-top: 20px;" autocomplete="off">
       <div class="form-group">
         <label for="category"><i class="fas fa-folder-plus icon"></i> Категория</label>
         <select id="category" required>
@@ -89,26 +89,26 @@
 
       <div class="form-group">
         <label for="text"><i class="fas fa-pen icon"></i> Текст объявления</label>
-        <textarea id="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
+        <textarea id="text" rows="4" placeholder="Введите текст объявления…" required></textarea>
       </div>
 
       <!-- GDPR -->
-      <div class="form-group checkbox" id="gdprWrapper">
-        <input type="checkbox" id="gdpr" required />
-        <label id="gdprLabel" for="gdpr">
+      <div class="form-group checkbox" id="gdprWrapper" style="display: flex; gap: 10px; align-items: flex-start; margin-top: 12px;">
+        <input type="checkbox" id="gdpr" required style="transform: scale(1.3); margin-top: 4px;" />
+        <label id="gdprLabel" for="gdpr" style="font-size: 14px; color: #6c757d;">
           Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank">обработкой персональных данных</a>
         </label>
       </div>
 
       <!-- Кнопки формы -->
-      <div class="form-buttons">
+      <div class="form-buttons" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
         <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить</button>
         <button type="button" id="backBtn"><i class="fas fa-arrow-left"></i> Назад</button>
       </div>
     </form>
   </main>
 
-  <!-- JavaScript отключен -->
+  <!-- JS выключен -->
   <noscript>
     <p class="noscript-msg">❌ Включите JavaScript для использования приложения</p>
   </noscript>
@@ -117,7 +117,6 @@
   <script src="data.js"></script>
   <script src="script.js"></script>
 
-  <!-- Telegram Only -->
   <script>
     if (!(window.Telegram && Telegram.WebApp)) {
       document.body.innerHTML = "<p class='noscript-msg'>❌ Откройте через Telegram</p>";

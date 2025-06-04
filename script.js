@@ -48,7 +48,15 @@ function resetForm() {
   mainButtons.style.display = "flex";
   viewCategoryBlock.style.display = "block";
   adForm.reset();
+
+  // Явно сбрасываем значения и состояния
+  categorySelect.value = "";
+  contactInput.value = "";
+  textInput.value = "";
+  gdprCheckbox.checked = false;
+
   submitBtn.disabled = false;
+  submitBtn.innerText = "Отправить";
 }
 
 // ▶️ Показ формы
@@ -61,7 +69,10 @@ function showForm() {
   mainButtons.style.display = "none";
   viewCategoryBlock.style.display = "none";
   adForm.style.display = "flex";
-  adForm.scrollIntoView({ behavior: "smooth" });
+
+  requestAnimationFrame(() => {
+    adForm.scrollIntoView({ behavior: "smooth" });
+  });
 }
 
 // ▶️ Инициализация
@@ -87,12 +98,8 @@ function init() {
       return;
     }
 
-    const hashCountry = "#" + encodeURIComponent(country);
-    const hashCity = "#" + encodeURIComponent(city);
-    const hashCategory = category ? "#" + encodeURIComponent(category) : "";
-
-    const finalLink = `https://t.me/ZhivuVChannel?country=${hashCountry}&city=${hashCity}${hashCategory}`;
-    Telegram.WebApp.openLink(finalLink);
+    const url = `https://t.me/ZhivuVChannel?country=${encodeURIComponent(country)}&city=${encodeURIComponent(city)}${category ? `&category=${encodeURIComponent(category)}` : ""}`;
+    Telegram.WebApp.openLink(url);
   });
 
   submitBtn.addEventListener("click", (e) => {
@@ -116,11 +123,16 @@ function init() {
     submitBtn.disabled = true;
     submitBtn.innerText = "Отправка...";
 
-    Telegram.WebApp.sendData(JSON.stringify(data));
-
-    setTimeout(() => {
-      Telegram.WebApp.close();
-    }, 600);
+    try {
+      Telegram.WebApp.sendData(JSON.stringify(data));
+      setTimeout(() => {
+        Telegram.WebApp.close();
+      }, 600);
+    } catch (err) {
+      alert("Ошибка при отправке. Попробуйте снова.");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Отправить";
+    }
   });
 }
 
