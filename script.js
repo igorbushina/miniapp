@@ -11,19 +11,9 @@ const gdprCheckbox = document.getElementById("gdpr");
 const backBtn = document.getElementById("backBtn");
 const submitBtn = document.getElementById("submitBtn");
 
-const mainButtons = document.getElementById("mainButtons");
-const viewCategoryBlock = document.getElementById("viewCategoryBlock");
-
 // ▶️ Заполнение стран
 function populateCountries() {
-  countrySelect.innerHTML = "";
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "";
-  defaultOption.disabled = true;
-  defaultOption.selected = true;
-  defaultOption.textContent = "Выберите страну";
-  countrySelect.appendChild(defaultOption);
-
+  countrySelect.innerHTML = "<option value='' selected disabled>Выберите страну</option>";
   const countries = Object.keys(window.countries || {}).sort();
   countries.forEach(country => {
     const option = document.createElement("option");
@@ -35,27 +25,8 @@ function populateCountries() {
 
 // ▶️ Заполнение городов по стране
 function populateCities(country) {
-  citySelect.innerHTML = "";
-
-  const cities = window.countries[country];
-  if (!cities || cities.length === 0) {
-    citySelect.disabled = true;
-    const emptyOption = document.createElement("option");
-    emptyOption.value = "";
-    emptyOption.disabled = true;
-    emptyOption.selected = true;
-    emptyOption.textContent = "Нет доступных городов";
-    citySelect.appendChild(emptyOption);
-    return;
-  }
-
-  const defaultOption = document.createElement("option");
-  defaultOption.value = "";
-  defaultOption.disabled = true;
-  defaultOption.selected = true;
-  defaultOption.textContent = "Выберите город";
-  citySelect.appendChild(defaultOption);
-
+  citySelect.innerHTML = "<option value='' selected disabled>Выберите город</option>";
+  const cities = window.countries?.[country] || [];
   cities.forEach(city => {
     const option = document.createElement("option");
     option.value = city;
@@ -69,15 +40,11 @@ function populateCities(country) {
 // ▶️ Очистка формы
 function resetForm() {
   adForm.style.display = "none";
-  mainButtons.style.display = "flex";
-  viewCategoryBlock.style.display = "block";
   adForm.reset();
-
   categorySelect.value = "";
   contactInput.value = "";
   textInput.value = "";
   gdprCheckbox.checked = false;
-
   submitBtn.disabled = false;
   submitBtn.innerText = "Отправить";
 }
@@ -89,10 +56,7 @@ function showForm() {
     return;
   }
 
-  mainButtons.style.display = "none";
-  viewCategoryBlock.style.display = "none";
   adForm.style.display = "flex";
-
   requestAnimationFrame(() => {
     adForm.scrollIntoView({ behavior: "smooth" });
   });
