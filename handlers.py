@@ -1,8 +1,6 @@
 import os
 import json
 import logging
-from datetime import datetime
-import requests
 from dotenv import load_dotenv
 from telegram import (
     Update,
@@ -27,7 +25,6 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 CHANNEL_ID = os.getenv("CHANNEL_ID")  # Пример: -1002538677330
-SAVE_AD_WEBHOOK = os.getenv("SAVE_AD_WEBHOOK")  # Webhook Make.com
 
 if not WEBAPP_URL:
     logger.warning("⚠️ Переменная WEBAPP_URL не установлена.")
@@ -41,13 +38,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "👋 Привет! Нажми кнопку ниже, чтобы выбрать страну и город:",
         reply_markup=reply_markup
-    )
-
-# /getchatid
-async def get_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        f"Chat ID: <code>{update.effective_chat.id}</code>",
-        parse_mode="HTML"
     )
 
 # 🟢 Обработка WebApp
@@ -71,7 +61,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.reply_text("⛔ Публикация из России временно недоступна.")
             return
 
-        # Просмотр — всегда в канал
+        # Просмотр объявлений — всегда в канал
         if action == "view":
             await update.message.reply_text(
                 "📢 Перейдите в канал с объявлениями:",
@@ -81,7 +71,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             )
             return
 
-        # Публикация
+        # Добавление объявления
         if action == "add":
             if not all([category, contact, text]):
                 await update.message.reply_text("⚠️ Пожалуйста, заполните все поля.")
@@ -102,21 +92,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 "chat_id": CHANNEL_ID
             }
 
-            # ✅ Сохранение в Make Webhook
-            if SAVE_AD_WEBHOOK:
-                try:
-                    requests.post(SAVE_AD_WEBHOOK, json={
-                        "country": country,
-                        "city": city,
-                        "category": category,
-                        "contact": contact,
-                        "text": text,
-                        "timestamp": datetime.utcnow().isoformat()
-                    }, timeout=5)
-                except Exception as e:
-                    logger.warning("⚠️ Ошибка отправки в Webhook", exc_info=True)
-
-            # 📤 Отправка в канал
             await context.bot.send_message(
                 chat_id=CHANNEL_ID,
                 text=post,
@@ -131,7 +106,7 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logger.error("❌ Ошибка обработки данных WebApp", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при обработке данных.")
 
-# 📸 Обработка фото
+# 📸 Приём фото после публикации
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = context.user_data.get("last_post")
@@ -159,7 +134,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error("❌ Ошибка при прикреплении фото", exc_info=True)
         await update.message.reply_text("⚠️ Ошибка при прикреплении фото.")
 
-# 💬 Вывод Chat ID по умолчанию
+# 💬 Ответ по умолчанию — вывод Chat ID
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Chat ID: <code>{update.effective_chat.id}</code>",
@@ -169,7 +144,6 @@ async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # 🧩 Подключение хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("getchatid", get_chat_id))
     app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo_chat_id))
