@@ -9,6 +9,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const viewBtn = document.getElementById("viewBtn");
   const addBtn = document.getElementById("addBtn");
   const backBtn = document.getElementById("backBtn");
+  const viewCategoryBlock = document.getElementById("viewCategoryBlock");
+  const viewCategorySelect = document.getElementById("viewCategory");
 
   // ✅ Проверка окружения Telegram
   if (!window.Telegram?.WebApp?.sendData) {
@@ -43,15 +45,30 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // 👁 Просмотр объявлений
   viewBtn.addEventListener("click", () => {
+    // Первый клик — показать выбор категории
+    if (viewCategoryBlock.style.display === "none") {
+      viewCategoryBlock.style.display = "block";
+      viewBtn.innerHTML = '<i class="fas fa-eye"></i> Показать';
+      return;
+    }
+
+    // Второй клик — отправить данные
     const country = countrySelect.value;
     const city = citySelect.value;
+    const category = viewCategorySelect.value;
 
     if (!country || !city) {
       alert("⚠️ Выберите страну и город.");
       return;
     }
 
-    const payload = { action: "view", country, city };
+    const payload = {
+      action: "view",
+      country,
+      city,
+      category
+    };
+
     Telegram.WebApp.sendData(JSON.stringify(payload));
     console.log("📤 View payload:", payload);
 
@@ -68,6 +85,8 @@ window.addEventListener("DOMContentLoaded", () => {
     viewBtn.style.display = "none";
     addBtn.style.display = "none";
     backBtn.style.display = "block";
+    viewCategoryBlock.style.display = "none";
+    viewBtn.innerHTML = '<i class="fas fa-eye"></i> Посмотреть объявления';
   });
 
   // ⬅️ Назад к меню
@@ -76,6 +95,8 @@ window.addEventListener("DOMContentLoaded", () => {
     viewBtn.style.display = "block";
     addBtn.style.display = "block";
     backBtn.style.display = "none";
+    viewCategoryBlock.style.display = "none";
+    viewBtn.innerHTML = '<i class="fas fa-eye"></i> Посмотреть объявления';
   });
 
   // 📤 Обработка формы отправки
@@ -117,6 +138,8 @@ window.addEventListener("DOMContentLoaded", () => {
     viewBtn.style.display = "block";
     addBtn.style.display = "block";
     backBtn.style.display = "none";
+    viewCategoryBlock.style.display = "none";
+    viewBtn.innerHTML = '<i class="fas fa-eye"></i> Посмотреть объявления';
 
     setTimeout(() => Telegram.WebApp.close(), 400);
   });
