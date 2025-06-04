@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" dir="ltr">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,13 +7,13 @@
   <meta name="description" content="Telegram Mini App 'Живу в…' — объявления по городам" />
   <title>Живу в…</title>
 
-  <!-- Rubik font -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <!-- Telegram SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Styles -->
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -28,8 +28,8 @@
     <label for="city"><i class="fas fa-city icon"></i> Город:</label>
     <select id="city" name="city" required></select>
 
-    <!-- Категория для просмотра -->
-    <div class="form-group" id="viewCategoryBlock" style="margin-top: 20px;">
+    <!-- Категория (для просмотра) -->
+    <div id="viewCategoryBlock" style="margin-top: 20px;">
       <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория:</label>
       <select id="viewCategory" name="viewCategory">
         <option value="">Все категории</option>
@@ -51,45 +51,36 @@
     </div>
 
     <!-- Форма добавления -->
-    <form id="adForm" style="display: none; margin-top: 30px;" autocomplete="off">
-      <div class="form-group">
-        <label for="category"><i class="fas fa-folder-open icon"></i> Категория:</label>
-        <select id="category" name="category" required>
-          <option value="">Выберите категорию</option>
-          <option value="Ремонт">Ремонт</option>
-          <option value="Услуги">Услуги</option>
-          <option value="Обучение">Обучение</option>
-          <option value="Жилье">Жилье</option>
-          <option value="Продажа">Продажа</option>
-          <option value="Куплю">Куплю</option>
-          <option value="Знакомства">Знакомства</option>
-          <option value="Новости">Новости</option>
-        </select>
-      </div>
+    <form id="adForm" style="display: none;" autocomplete="off">
+      <label for="category"><i class="fas fa-folder-plus icon"></i> Категория:</label>
+      <select id="category" name="category" required>
+        <option value="">Выберите категорию</option>
+        <option value="Ремонт">Ремонт</option>
+        <option value="Услуги">Услуги</option>
+        <option value="Обучение">Обучение</option>
+        <option value="Жилье">Жилье</option>
+        <option value="Продажа">Продажа</option>
+        <option value="Куплю">Куплю</option>
+        <option value="Знакомства">Знакомства</option>
+        <option value="Новости">Новости</option>
+      </select>
 
-      <div class="form-group">
-        <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
-        <textarea id="contact" name="contact" rows="2" placeholder="Например: @username, телефон" required></textarea>
-      </div>
+      <label for="contact"><i class="fas fa-user icon"></i> Контакт:</label>
+      <textarea id="contact" name="contact" rows="2" placeholder="@username или телефон" required></textarea>
 
-      <div class="form-group">
-        <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
-        <textarea id="text" name="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
-      </div>
+      <label for="text"><i class="fas fa-pen icon"></i> Текст объявления:</label>
+      <textarea id="text" name="text" rows="5" placeholder="Введите текст объявления…" required></textarea>
 
       <!-- GDPR -->
       <div class="form-group checkbox">
-        <input type="checkbox" id="gdpr" name="gdpr" required />
+        <input type="checkbox" id="gdpr" required />
         <label for="gdpr">
-          Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank" rel="noopener noreferrer">
-            обработкой персональных данных (GDPR)
-          </a>
+          Я согласен(а) с <a href="https://gdpr.eu/privacy-notice/" target="_blank">обработкой персональных данных (GDPR)</a>
         </label>
       </div>
 
-      <!-- Кнопки отправки -->
       <div class="form-buttons">
-        <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить объявление</button>
+        <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Отправить</button>
         <button type="button" id="backBtn" class="back-button"><i class="fas fa-arrow-left"></i> Назад</button>
       </div>
     </form>
@@ -103,10 +94,10 @@
   <script src="data.js"></script>
   <script src="script.js"></script>
 
-  <!-- Проверка Telegram -->
+  <!-- Telegram Only -->
   <script>
     if (!window.Telegram || !Telegram.WebApp) {
-      document.body.innerHTML = "<p style='text-align:center; padding:20px;'>❌ Пожалуйста, откройте через Telegram</p>";
+      document.body.innerHTML = "<p style='text-align:center; padding:20px;'>❌ Откройте приложение через Telegram</p>";
     }
   </script>
 </body>

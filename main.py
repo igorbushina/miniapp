@@ -7,7 +7,7 @@ from handlers import setup_handlers
 # 🔧 Загрузка .env
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # например: https://miniapp-xx0j.onrender.com/webhook
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # например: https://your-app.onrender.com/webhook
 PORT = int(os.getenv("PORT", 10000))
 
 # 🧾 Логирование
