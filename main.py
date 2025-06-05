@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder
 from handlers import setup_handlers
 
-# 🔧 Загрузка переменных из .env
+# 🔧 Загрузка переменных окружения
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
@@ -23,12 +23,13 @@ if not TOKEN:
 if not WEBHOOK_URL or not WEBHOOK_URL.startswith("http"):
     raise ValueError("❌ WEBHOOK_URL должен начинаться с http или https.")
 
-# 🤖 Приложение Telegram
+# 🤖 Инициализация Telegram-приложения
 application = ApplicationBuilder().token(TOKEN).build()
 setup_handlers(application)
 logger.info("✅ Хендлеры подключены.")
 
-# 🚀 Прямой запуск Webhook
+# 🚀 Прямой запуск Webhook без async def
+logger.info(f"🚀 Запуск Telegram-бота через Webhook на {WEBHOOK_URL}...")
 application.run_webhook(
     listen="0.0.0.0",
     port=PORT,
