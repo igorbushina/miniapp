@@ -30,10 +30,13 @@ if not WEBAPP_URL:
     logger.warning("⚠️ Переменная WEBAPP_URL не установлена.")
 if not CHANNEL_ID:
     raise ValueError("❌ Переменная CHANNEL_ID не установлена в .env")
+else:
+    CHANNEL_ID = int(CHANNEL_ID)
+
 if not SAVE_AD_WEBHOOK:
     logger.warning("⚠️ Переменная SAVE_AD_WEBHOOK не установлена.")
 
-# 🚀 /start с кнопкой запуска Mini App
+# 🚀 /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [[KeyboardButton("🌍 Живу в…", web_app=WebAppInfo(url=WEBAPP_URL))]]
     markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
@@ -42,9 +45,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=markup
     )
 
-# 📦 Обработка WebApp-данных
+# 📦 Обработка данных из Mini App
 async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
+        logger.info(f"🧩 Сработал handle_webapp_data: {update}")
+
         if not update.message or not update.message.web_app_data:
             logger.warning("⚠️ Нет web_app_data в сообщении.")
             return
@@ -53,7 +58,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
         logger.info(f"📥 Получены данные из WebApp: {raw_data}")
 
         data = json.loads(raw_data)
-
         action = data.get("action")
         country = data.get("country")
         city = data.get("city")
@@ -88,7 +92,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 f"{hashtags}"
             )
 
-            # Отправка в канал Telegram
             sent = await context.bot.send_message(
                 chat_id=CHANNEL_ID,
                 text=post,
@@ -100,7 +103,6 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 "chat_id": CHANNEL_ID
             }
 
-            # ⬆️ Отправка в Webhook Make
             payload = {
                 "user_id": update.effective_user.id,
                 "country": country,
@@ -122,15 +124,15 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 except requests.RequestException as err:
                     logger.error(f"❌ Ошибка при отправке Webhook: {err}", exc_info=True)
             else:
-                logger.warning("⚠️ SAVE_AD_WEBHOOK не указан, пропуск отправки.")
+                logger.warning("⚠️ SAVE_AD_WEBHOOK не указан.")
 
             await update.message.reply_text("✅ Объявление опубликовано!\n📸 Можете отправить фото — я прикреплю его к объявлению.")
 
     except Exception as e:
         logger.error("❌ Ошибка при обработке WebApp-данных", exc_info=True)
-        await update.message.reply_text("⚠️ Произошла ошибка при обработке данных.")
+        await update.message.reply_text("⚠️ Ошибка при обработке данных.")
 
-# 📸 Обработка отправки фото
+# 📸 Обработка фото
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         data = context.user_data.get("last_post")
@@ -151,24 +153,23 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML"
         )
 
-        await update.message.reply_text("📸 Фото успешно прикреплено!")
+        await update.message.reply_text("📸 Фото прикреплено!")
         context.user_data.pop("last_post", None)
 
     except Exception as e:
         logger.error("❌ Ошибка при добавлении фото", exc_info=True)
         await update.message.reply_text("⚠️ Не удалось прикрепить фото.")
 
-# 🔁 По умолчанию: возвращаем Chat ID
+# ℹ️ Ответ с chat ID
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Ваш Chat ID: <code>{update.effective_chat.id}</code>",
         parse_mode="HTML"
     )
 
-# 🧩 Регистрация хендлеров
+# 🔗 Подключение хендлеров
 def setup_handlers(app):
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
+    app.add_handler(MessageHandler(filters.ALL, handle_webapp_data))  # временно для отладки
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo_chat_id))
-
