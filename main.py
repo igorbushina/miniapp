@@ -36,8 +36,7 @@ async def main():
     await application.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        webhook_url=WEBHOOK_URL,
-        allowed_updates=telegram.ext.defaults.DEFAULT_ALLOWED_UPDATES,
+        webhook_url=WEBHOOK_URL
     )
 
 if __name__ == "__main__":
