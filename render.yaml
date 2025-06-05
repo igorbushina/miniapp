@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: miniapp
+    name: zhivuvbot
     env: python
     region: frankfurt
     plan: free
-    buildCommand: ""
+    buildCommand: pip install -r requirements.txt
     startCommand: python main.py
     envVars:
       - key: BOT_TOKEN
@@ -13,8 +13,6 @@ services:
         fromEnvVar: CHANNEL_ID
       - key: SAVE_AD_WEBHOOK
         fromEnvVar: SAVE_AD_WEBHOOK
-      - key: WEBAPP_URL
-        fromEnvVar: WEBAPP_URL
       - key: WEBHOOK_URL
         fromEnvVar: WEBHOOK_URL
       - key: PORT
