@@ -42,11 +42,11 @@ function populateCities(country) {
   citySelect.disabled = false;
 }
 
-// ▶️ Очистка и возврат к главному экрану
+// ▶️ Очистка формы
 function resetForm() {
   adForm.style.display = "none";
   mainButtons.style.display = "flex";
-  viewCategoryBlock.style.display = "none"; // Категория скрыта по умолчанию
+  viewCategoryBlock.style.display = "none";
 
   categorySelect.value = "";
   contactInput.value = "";
@@ -65,7 +65,7 @@ function showForm() {
   }
 
   mainButtons.style.display = "none";
-  viewCategoryBlock.style.display = "none"; // Категория не нужна в форме
+  viewCategoryBlock.style.display = "none"; // Категория только при просмотре
   adForm.style.display = "flex";
 
   requestAnimationFrame(() => {
@@ -90,16 +90,12 @@ function init() {
   viewButton.addEventListener("click", () => {
     const country = countrySelect.value;
     const city = citySelect.value;
+    const category = viewCategorySelect.value;
 
     if (!country || !city) {
       alert("Пожалуйста, выберите страну и город для просмотра.");
       return;
     }
-
-    // Показываем блок выбора категории
-    viewCategoryBlock.style.display = "block";
-
-    const category = viewCategorySelect.value;
 
     const url = `https://t.me/ZhivuVChannel?country=${encodeURIComponent(country)}&city=${encodeURIComponent(city)}${category ? `&category=${encodeURIComponent(category)}` : ""}`;
     Telegram.WebApp.openLink(url);
@@ -118,6 +114,8 @@ function init() {
       text: textInput.value.trim(),
       gdpr: gdprCheckbox.checked
     };
+
+    console.log("📤 Отправляемые данные:", data);
 
     if (!data.country || !data.city || !data.category || !data.contact || !data.text || !data.gdpr) {
       alert("Пожалуйста, заполните все поля и подтвердите согласие на обработку данных.");
