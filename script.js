@@ -12,6 +12,7 @@ const backBtn = document.getElementById("backBtn");
 const submitBtn = document.getElementById("submitBtn");
 const mainButtons = document.getElementById("mainButtons");
 const viewCategoryBlock = document.getElementById("viewCategoryBlock");
+const viewCategorySelect = document.getElementById("viewCategory");
 
 // ▶️ Заполнение стран
 function populateCountries() {
@@ -57,7 +58,7 @@ function resetForm() {
 // ▶️ Показ формы
 function showForm() {
   if (!countrySelect.value || !citySelect.value) {
-    alert("Пожалуйста, выберите страну и город.");
+    alert("Пожалуйста, выберите страну и город перед подачей объявления.");
     return;
   }
 
@@ -86,10 +87,10 @@ function init() {
   viewButton.addEventListener("click", () => {
     const country = countrySelect.value;
     const city = citySelect.value;
-    const category = document.getElementById("viewCategory").value;
+    const category = viewCategorySelect.value;
 
     if (!country || !city) {
-      alert("Пожалуйста, выберите страну и город.");
+      alert("Пожалуйста, выберите страну и город для просмотра.");
       return;
     }
 
@@ -124,7 +125,7 @@ function init() {
         Telegram.WebApp.close();
       }, 600);
     } catch (err) {
-      alert("Ошибка при отправке. Попробуйте снова.");
+      alert("❌ Ошибка при отправке. Попробуйте ещё раз.");
       submitBtn.disabled = false;
       submitBtn.innerText = "Отправить";
     }

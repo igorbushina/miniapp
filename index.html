@@ -7,7 +7,7 @@
   <meta name="description" content="Telegram Mini App 'Живу в…' — объявления по городам" />
   <title>Живу в…</title>
 
-  <!-- Шрифты и стили -->
+  <!-- Шрифты и иконки -->
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -109,6 +109,13 @@
       color: #495057;
     }
 
+    #gdprWrapper input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
     #gdprWrapper a {
       color: #1d4ed8;
       text-decoration: none;
@@ -208,7 +215,7 @@
 
       <div class="form-group checkbox" id="gdprWrapper">
         <input type="checkbox" id="gdpr" required />
-        <label id="gdprLabel" for="gdpr">
+        <label for="gdpr">
           Я согласен(а) с <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj" target="_blank">обработкой персональных данных</a>
         </label>
       </div>
@@ -234,3 +241,4 @@
   </script>
 </body>
 </html>
+
