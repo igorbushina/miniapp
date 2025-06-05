@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: miniapp
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: ""
+    startCommand: python main.py
+    envVars:
+      - key: BOT_TOKEN
+        fromEnvVar: BOT_TOKEN
+      - key: CHANNEL_ID
+        fromEnvVar: CHANNEL_ID
+      - key: SAVE_AD_WEBHOOK
+        fromEnvVar: SAVE_AD_WEBHOOK
+      - key: WEBAPP_URL
+        fromEnvVar: WEBAPP_URL
+      - key: WEBHOOK_URL
+        fromEnvVar: WEBHOOK_URL
+      - key: PORT
+        fromEnvVar: PORT
