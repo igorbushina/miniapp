@@ -36,8 +36,8 @@
         </select>
       </div>
 
-      <!-- Категория для просмотра -->
-      <div class="form-group" id="viewCategoryBlock">
+      <!-- Категория для просмотра (по умолчанию скрыта, показывается только при просмотре) -->
+      <div class="form-group" id="viewCategoryBlock" style="display: none;">
         <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория</label>
         <select id="viewCategory">
           <option value="">Все категории</option>
@@ -86,7 +86,7 @@
         <textarea id="text" rows="4" placeholder="Введите текст объявления…" required></textarea>
       </div>
 
-      <!-- ✅ GDPR с галочкой в строку -->
+      <!-- ✅ GDPR -->
       <div class="form-group" id="gdprWrapper">
         <label id="gdprLabel">
           <input type="checkbox" id="gdpr" required />

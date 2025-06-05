@@ -22,7 +22,7 @@ if not TOKEN:
     raise ValueError("❌ Переменная BOT_TOKEN не установлена в .env")
 
 if not WEBHOOK_URL or not WEBHOOK_URL.startswith("http"):
-    raise ValueError("❌ WEBHOOK_URL должен начинаться с http/https")
+    raise ValueError("❌ Переменная WEBHOOK_URL должна начинаться с http/https")
 
 # 🤖 Инициализация приложения
 application = ApplicationBuilder().token(TOKEN).build()
