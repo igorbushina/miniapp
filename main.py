@@ -17,15 +17,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# ✅ Проверка переменных окружения
 if not TOKEN:
     raise ValueError("❌ BOT_TOKEN не установлен.")
 if not WEBHOOK_URL or not WEBHOOK_URL.startswith("http"):
     raise ValueError("❌ WEBHOOK_URL должен начинаться с http или https.")
 
+# 🤖 Инициализация Telegram-приложения
 application = ApplicationBuilder().token(TOKEN).build()
 setup_handlers(application)
 logger.info("✅ Хендлеры подключены.")
 
+# 🚀 Запуск Webhook
 async def main():
     logger.info(f"🚀 Запуск Telegram-бота через Webhook на {WEBHOOK_URL}...")
     await application.run_webhook(
@@ -33,9 +36,9 @@ async def main():
         port=PORT,
         webhook_url=WEBHOOK_URL
     )
-    
-    # FIXED: обновлён main.py для Render
 
 if __name__ == "__main__":
     import asyncio
     asyncio.run(main())
+    
+    # 🔧 COMMIT_TAG: main.py обновлён 05.06.2025
