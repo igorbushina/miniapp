@@ -66,13 +66,11 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
             await update.message.reply_text("⚠️ Не удалось определить действие.")
             return
 
-        # 🔒 Блокировка по стране
         if country == "Россия":
             await update.message.reply_text("⛔ Публикация из России временно недоступна.")
             return
 
         if action == "add":
-            # 🔍 Проверка обязательных полей
             if not all([country, city, category, contact, text]):
                 await update.message.reply_text("⚠️ Пожалуйста, заполните все поля.")
                 return
@@ -90,20 +88,19 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 f"{hashtags}"
             )
 
-            # Публикация в Telegram
+            # Отправка в канал Telegram
             sent = await context.bot.send_message(
                 chat_id=CHANNEL_ID,
                 text=post,
                 parse_mode="HTML"
             )
 
-            # Сохраняем для прикрепления фото
             context.user_data["last_post"] = {
                 "post": post,
                 "chat_id": CHANNEL_ID
             }
 
-            # Отправка в Make Webhook
+            # ⬆️ Отправка в Webhook Make
             payload = {
                 "user_id": update.effective_user.id,
                 "country": country,
@@ -117,16 +114,17 @@ async def handle_webapp_data(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 "message_id": sent.message_id
             }
 
-            try:
-                response = requests.post(SAVE_AD_WEBHOOK, json=payload, timeout=5)
-                response.raise_for_status()
-                logger.info("✅ Данные отправлены в Make Webhook")
-            except Exception as e:
-                logger.error("❌ Ошибка при отправке в Webhook", exc_info=True)
+            if SAVE_AD_WEBHOOK:
+                try:
+                    response = requests.post(SAVE_AD_WEBHOOK, json=payload, timeout=5)
+                    response.raise_for_status()
+                    logger.info(f"✅ Данные отправлены в Webhook ({response.status_code}): {response.text}")
+                except requests.RequestException as err:
+                    logger.error(f"❌ Ошибка при отправке Webhook: {err}", exc_info=True)
+            else:
+                logger.warning("⚠️ SAVE_AD_WEBHOOK не указан, пропуск отправки.")
 
-            await update.message.reply_text(
-                "✅ Объявление опубликовано!\n📸 Можете отправить фото — я прикреплю его к объявлению."
-            )
+            await update.message.reply_text("✅ Объявление опубликовано!\n📸 Можете отправить фото — я прикреплю его к объявлению.")
 
     except Exception as e:
         logger.error("❌ Ошибка при обработке WebApp-данных", exc_info=True)
@@ -160,7 +158,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.error("❌ Ошибка при добавлении фото", exc_info=True)
         await update.message.reply_text("⚠️ Не удалось прикрепить фото.")
 
-# 🪪 Ответ по умолчанию — вывод Chat ID
+# 🔁 По умолчанию: возвращаем Chat ID
 async def echo_chat_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         f"Ваш Chat ID: <code>{update.effective_chat.id}</code>",
@@ -173,3 +171,4 @@ def setup_handlers(app):
     app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp_data))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo_chat_id))
+
