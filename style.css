@@ -52,7 +52,6 @@ h1 {
   margin-right: 6px;
 }
 
-/* Формы */
 .form-section,
 #adForm {
   display: flex;
@@ -60,7 +59,6 @@ h1 {
   gap: 16px;
 }
 
-/* Группы */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -96,27 +94,28 @@ input:focus {
   background-color: #f7faff;
 }
 
-/* GDPR-блок */
+/* GDPR-блок (одна строка с галочкой и текстом) */
 #gdprWrapper {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
+  align-items: center;
+  gap: 10px;
   margin-top: 4px;
-  line-height: 1.5;
+  font-size: 14px;
+  color: var(--gray-text);
+  line-height: 1.4;
 }
 
 #gdpr {
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
-  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
 }
 
 #gdprLabel {
+  display: inline;
   font-size: 14px;
-  color: var(--gray-text);
   cursor: default;
+  color: var(--gray-text);
 }
 
 #gdprLabel a {
@@ -170,14 +169,12 @@ button {
   background: #cbd3da;
 }
 
-/* Кнопки формы */
 .form-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* Сообщение при отключённом JS */
 .noscript-msg {
   text-align: center;
   color: var(--danger);
