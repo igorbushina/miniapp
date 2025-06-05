@@ -1,6 +1,5 @@
 import os
 import logging
-import asyncio
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder
 from handlers import setup_handlers
@@ -9,7 +8,7 @@ from handlers import setup_handlers
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # https://your-app.onrender.com/webhook
-WEBHOOK_PATH = os.getenv("WEBHOOK_PATH", "/webhook")  # НЕ использовать в ApplicationBuilder
+WEBHOOK_PATH = os.getenv("WEBHOOK_PATH", "/webhook")
 PORT = int(os.getenv("PORT", 10000))
 
 # 🧾 Логирование
@@ -19,24 +18,24 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# 🤖 Инициализация приложения
+# ✅ Проверка переменных
+if not TOKEN:
+    raise ValueError("❌ Переменная BOT_TOKEN не установлена.")
+if not WEBHOOK_URL.startswith("http"):
+    raise ValueError("❌ WEBHOOK_URL должна начинаться с http/https")
+
+# 🤖 Создание Telegram-приложения
 application = ApplicationBuilder().token(TOKEN).build()
 
 # 🔌 Подключение хендлеров
 setup_handlers(application)
 logger.info("✅ Хендлеры подключены.")
 
-# 🚀 Запуск webhook
-async def main():
-    logger.info("🚀 Запуск Telegram-бота...")
-    await application.bot.set_webhook(url=WEBHOOK_URL + WEBHOOK_PATH)
-    logger.info(f"🌐 Webhook установлен: {WEBHOOK_URL + WEBHOOK_PATH}")
-    await application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        webhook_url=WEBHOOK_URL + WEBHOOK_PATH,
-        allowed_updates=["message", "callback_query"]
-    )
-
-if __name__ == "__main__":
-    asyncio.run(main())
+# 🚀 Запуск Webhook сервера (без asyncio.run)
+logger.info("🚀 Запуск Telegram-бота...")
+application.run_webhook(
+    listen="0.0.0.0",
+    port=PORT,
+    webhook_url=WEBHOOK_URL + WEBHOOK_PATH,
+    allowed_updates=["message", "callback_query"]
+)
