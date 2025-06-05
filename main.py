@@ -33,6 +33,8 @@ async def main():
         port=PORT,
         webhook_url=WEBHOOK_URL
     )
+    
+    # FIXED: обновлён main.py для Render
 
 if __name__ == "__main__":
     import asyncio
