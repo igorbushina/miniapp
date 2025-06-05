@@ -20,7 +20,7 @@
       <h1><i class="fas fa-globe icon"></i> Живу в…</h1>
     </div>
 
-    <!-- 🌍 Блок выбора страны и города -->
+    <!-- 🌍 Страна и город -->
     <section class="form-section">
       <div class="form-group">
         <label for="country"><i class="fas fa-flag icon"></i> Страна</label>
@@ -36,6 +36,7 @@
         </select>
       </div>
 
+      <!-- Категория для просмотра -->
       <div class="form-group" id="viewCategoryBlock">
         <label for="viewCategory"><i class="fas fa-folder-open icon"></i> Категория</label>
         <select id="viewCategory">
@@ -51,13 +52,14 @@
         </select>
       </div>
 
+      <!-- Кнопки -->
       <div class="form-buttons" id="mainButtons">
         <button id="viewBtn"><i class="fas fa-eye"></i> Посмотреть объявления</button>
         <button id="addBtn"><i class="fas fa-plus"></i> Добавить объявление</button>
       </div>
     </section>
 
-    <!-- 📥 Форма добавления -->
+    <!-- 📥 Добавление объявления -->
     <form id="adForm" style="display: none;" autocomplete="off">
       <div class="form-group">
         <label for="category"><i class="fas fa-folder-plus icon"></i> Категория</label>
@@ -84,8 +86,9 @@
         <textarea id="text" rows="4" placeholder="Введите текст объявления…" required></textarea>
       </div>
 
+      <!-- ✅ GDPR с галочкой в строку -->
       <div class="form-group" id="gdprWrapper">
-        <label for="gdpr" id="gdprLabel">
+        <label id="gdprLabel">
           <input type="checkbox" id="gdpr" required />
           Я согласен(а) с <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj" target="_blank">обработкой персональных данных (GDPR)</a>
         </label>

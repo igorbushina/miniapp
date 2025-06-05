@@ -1,3 +1,5 @@
+// ✅ script.js — финальная версия
+
 // 🔧 DOM-элементы
 const countrySelect = document.getElementById("country");
 const citySelect = document.getElementById("city");
@@ -40,13 +42,12 @@ function populateCities(country) {
   citySelect.disabled = false;
 }
 
-// ▶️ Очистка и возврат к главному экрану
+// ▶️ Очистка формы
 function resetForm() {
   adForm.style.display = "none";
   mainButtons.style.display = "flex";
-  viewCategoryBlock.style.display = "block"; // показать только для просмотра
+  viewCategoryBlock.style.display = "block";
 
-  // Сброс значений формы
   categorySelect.value = "";
   contactInput.value = "";
   textInput.value = "";
@@ -64,7 +65,7 @@ function showForm() {
   }
 
   mainButtons.style.display = "none";
-  viewCategoryBlock.style.display = "none"; // скрыть выбор категории для просмотра
+  viewCategoryBlock.style.display = "none";
   adForm.style.display = "flex";
 
   requestAnimationFrame(() => {
@@ -85,7 +86,7 @@ function init() {
   addButton.addEventListener("click", showForm);
   backBtn.addEventListener("click", resetForm);
 
-  // ▶️ Обработка кнопки "Посмотреть"
+  // ▶️ Кнопка "Посмотреть объявления"
   viewButton.addEventListener("click", () => {
     const country = countrySelect.value;
     const city = citySelect.value;
@@ -100,7 +101,7 @@ function init() {
     Telegram.WebApp.openLink(url);
   });
 
-  // ▶️ Отправка данных из формы
+  // ▶️ Кнопка "Отправить объявление"
   submitBtn.addEventListener("click", (e) => {
     e.preventDefault();
 
@@ -135,5 +136,5 @@ function init() {
   });
 }
 
-// ▶️ Старт
+// ▶️ Запуск
 document.addEventListener("DOMContentLoaded", init);
