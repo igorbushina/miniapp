@@ -40,7 +40,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = ReplyKeyboardMarkup(
         [
             [KeyboardButton("/add"), KeyboardButton("/cancel")],
-            [KeyboardButton("/search"), KeyboardButton("/start")]
+            [KeyboardButton("/search"), KeyboardButton("/help")]
         ],
         resize_keyboard=True
     )
@@ -49,7 +49,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=keyboard
     )
 
-# ❓ /help
+# ❓ Команда /help
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "ℹ️ Команды:\n"
@@ -114,7 +114,7 @@ async def set_gdpr(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("⛔ Публикация невозможна без согласия.")
         return ConversationHandler.END
 
-    # 📦 Получение данных
+    # 📦 Данные
     user_id = update.effective_user.id
     message_date = update.message.date.isoformat()
 
@@ -144,13 +144,11 @@ async def set_gdpr(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("❌ Не удалось опубликовать. Попробуйте позже.")
         return ConversationHandler.END
 
-    # Сохраняем объявление
     context.user_data["last_post"] = {
         "post": post,
         "chat_id": CHANNEL_ID
     }
 
-    # 📤 Webhook Make
     payload = {
         "user_id": user_id,
         "country": country,
