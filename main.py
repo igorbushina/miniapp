@@ -10,7 +10,7 @@ TOKEN = os.getenv("BOT_TOKEN")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 PORT = int(os.getenv("PORT", 10000))
 
-# 🧾 Логирование
+# 🧾 Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
@@ -28,7 +28,7 @@ application = ApplicationBuilder().token(TOKEN).build()
 setup_handlers(application)
 logger.info("✅ Хендлеры подключены.")
 
-# 🚀 Прямой запуск Webhook без async def
+# 🚀 Запуск Webhook (без asyncio.run)
 logger.info(f"🚀 Запуск Telegram-бота через Webhook на {WEBHOOK_URL}...")
 application.run_webhook(
     listen="0.0.0.0",
